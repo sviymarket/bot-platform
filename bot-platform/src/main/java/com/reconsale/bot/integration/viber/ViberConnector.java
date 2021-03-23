@@ -1,6 +1,8 @@
 package com.reconsale.bot.integration.viber;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.gson.Gson;
 import com.reconsale.bot.integration.Connector;
+import com.reconsale.bot.model.Context;
 import com.reconsale.bot.model.Payload;
 import com.reconsale.bot.model.Request;
 import com.reconsale.bot.model.Response;
@@ -17,8 +20,6 @@ import com.reconsale.viber4j.ViberBotManager;
 import com.reconsale.viber4j.incoming.Incoming;
 import com.reconsale.viber4j.incoming.IncomingImpl;
 
-import ch.qos.logback.core.Context;
-
 public class ViberConnector extends Connector {
 	
 
@@ -27,8 +28,10 @@ public class ViberConnector extends Connector {
 	
     private Gson gson = new Gson();
     
+    @Value("${}")
 	private String botToken;
 	
+    @Autowired
 	private ViberBotManager viberBotManager;	
 
     @RequestMapping(method = RequestMethod.POST, path = "/viberbot")
