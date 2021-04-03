@@ -21,8 +21,7 @@ import ch.qos.logback.core.Context;
 
 public class ViberConnector extends Connector {
 	
-
-    private final String MESSAGE_EVENT = "message";
+	private final String MESSAGE_EVENT = "message";
     private final String START_MSG_EVENT = "conversation_started";
 	
     private Gson gson = new Gson();
