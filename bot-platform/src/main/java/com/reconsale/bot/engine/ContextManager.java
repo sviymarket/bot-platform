@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import ch.qos.logback.core.Context;
+import com.reconsale.bot.model.Context;
 
 @Component
 public class ContextManager {
