@@ -4,9 +4,11 @@ import com.reconsale.bot.model.response.Carousel;
 import com.reconsale.bot.model.response.Menu;
 import com.reconsale.bot.model.response.Tile;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class Response {
 
 	private String refefence;
