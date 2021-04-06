@@ -1,9 +1,9 @@
 package com.reconsale.bot.model.response;
 
-public class Button {
+import java.util.List;
 
-	private String payload;
+public class Button {
 	
-	private String caption;
-	
+	private List<Button> buttons;
+
 }

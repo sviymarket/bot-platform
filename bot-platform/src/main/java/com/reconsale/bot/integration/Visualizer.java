@@ -1,14 +1,16 @@
 package com.reconsale.bot.integration;
 
-import com.reconsale.bot.model.response.Button;
 import com.reconsale.bot.model.response.Carousel;
 import com.reconsale.bot.model.response.Menu;
+import com.reconsale.bot.model.response.Tile;
 
-public interface Visualizer<B, C, M> {
+public interface Visualizer<T, B, C, M> {
 
-	B createButton(Button button);
+	B createMessage(String reference, String message);
 	
-	M createMenu(Menu menu);
+	T createTile(String reference, Tile tile);
 	
-	C createCarousel(Carousel carousel);	
+	M createMenu(String reference, Menu menu);
+	
+	C createCarousel(String reference, Carousel carousel);	
 }
