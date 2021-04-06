@@ -11,14 +11,13 @@ import com.reconsale.viber4j.ViberBotManager;
 @Component
 public class ViberStarter {
 
-	@Value("${}")
+	@Value("${viberAuthToken}")
 	private String botToken;
 	
-    @Value("${viber.web-hook}")
+    @Value("123")
     private String webHookUrl;
 	
-    @Autowired
-	private ViberBotManager viberBotManager;	
+	private ViberBotManager viberBotManager = new ViberBotManager();
 	
 	@PostConstruct
 	public void registerBot() {

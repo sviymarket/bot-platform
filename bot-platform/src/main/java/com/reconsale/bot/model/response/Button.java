@@ -1,9 +1,12 @@
 package com.reconsale.bot.model.response;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Button {
-	
-	private List<Button> buttons;
+
+    private String label;
 
 }
