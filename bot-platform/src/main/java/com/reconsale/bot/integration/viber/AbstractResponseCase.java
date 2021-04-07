@@ -12,13 +12,14 @@ import com.reconsale.viber4j.keyboard.ViberKeyboard;
 
 public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
-	protected ViberBotManager viberBotManager = new ViberBotManager();
+	@Autowired
+	protected ViberBotManager viberBotManager;
 	
 	@Autowired
 	protected Visualizer<RichMedia, String, RichMedia, ViberKeyboard> viberVisualizer;
 	
 	protected Gson gson = new Gson();
     
-    @Value("${viberAuthToken}")
+    @Value("${botToken}")
     protected String botToken;
 }
