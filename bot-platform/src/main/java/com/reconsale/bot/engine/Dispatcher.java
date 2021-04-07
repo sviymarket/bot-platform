@@ -29,7 +29,7 @@ public class Dispatcher {
         Handler h = mappings.get(key);
         log.info("Got mappings: " + mappings);
         log.info("Got handler: " + h);
-        return mappings.get(key).handle(request);
+        return h.handle(request);
     }
 
     private String toKey(Request request) {

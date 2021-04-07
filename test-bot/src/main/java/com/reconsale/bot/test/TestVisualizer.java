@@ -15,7 +15,7 @@ public class TestVisualizer implements Visualizer<RichMedia, String, RichMedia, 
 	@Override
 	public String createMessage(String reference, String message) {
 		// TODO Auto-generated method stub
-		return null;
+		return message;
 	}
 
 	@Override
