@@ -11,7 +11,7 @@ import com.reconsale.viber4j.ViberBotManager;
 @Component
 public class ViberStarter {
 
-	@Value("${}")
+	@Value("${botToken}")
 	private String botToken;
 	
     @Value("${viber.web-hook}")

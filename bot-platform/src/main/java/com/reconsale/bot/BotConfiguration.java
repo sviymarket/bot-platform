@@ -2,14 +2,20 @@ package com.reconsale.bot;
 
 import com.reconsale.bot.engine.Handler;
 import com.reconsale.bot.integration.ResponseCase;
+import com.reconsale.viber4j.ViberBotManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.*;
 
-@ComponentScan("com.reconsale.bot")
+@Configuration
 public class BotConfiguration {
+
+    @Bean
+    public ViberBotManager viberBotManager() {
+        return new ViberBotManager();
+    }
 
     @Bean
     public Map<String, Handler> handlers(ApplicationContext context) {
