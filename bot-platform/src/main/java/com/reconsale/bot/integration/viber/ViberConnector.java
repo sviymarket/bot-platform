@@ -1,73 +1,70 @@
 package com.reconsale.bot.integration.viber;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reconsale.bot.integration.Connector;
-import com.reconsale.bot.model.Context;
+import com.reconsale.bot.integration.ResponseCase;
 import com.reconsale.bot.model.Payload;
 import com.reconsale.bot.model.Request;
+import com.reconsale.bot.model.Response;
 import com.reconsale.bot.model.User;
-import com.reconsale.bot.model.viber.Sender;
-import com.reconsale.bot.model.viber.WebhookPayload;
+import com.reconsale.viber4j.incoming.Incoming;
+import com.reconsale.viber4j.incoming.IncomingImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.spark_project.guava.collect.Sets;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/viber")
 public class ViberConnector extends Connector {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final String MESSAGE_EVENT = "message";
+    private final String START_MSG_EVENT = "conversation_started";
 
-    @RequestMapping(method = RequestMethod.POST, path = "/webhook")
+    private final Set<String> acceptedEventTypes = Sets.newHashSet(MESSAGE_EVENT, START_MSG_EVENT);
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/viber/webhook")
     public void callback(@RequestBody String inputString) {
-
         log.info("Received input: " + inputString);
+        Incoming incoming = IncomingImpl.fromString(inputString);
+        log.info("Deserialized into: " + incoming);
 
-        WebhookPayload webhookPayload = toWebhookPayload(inputString);
+        String eventType = incoming.getEvent();
+        if (!acceptedEventTypes.contains(eventType)) {
+            log.info("Skipping event type '" + eventType + "'...");
+            return;
+        }
 
-        log.info("Deserialzied as: " + webhookPayload);
+        Request request = resolveRequest(incoming);
+        Response response = dispatcher.dispatch(request);
 
-        Request request = resolveRequest(webhookPayload);
-        dispatcher.dispatch(request);
+        resolveResponse(response);
     }
 
-    private WebhookPayload toWebhookPayload(String string) {
-        WebhookPayload webhookPayload = null;
-        try {
-            webhookPayload = objectMapper.readValue(string, WebhookPayload.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            log.info("Failed to deserialize input: " + string);
-        }
-        return webhookPayload;
+    private Request resolveRequest(Incoming incoming) {
+        User user = new User(incoming.getSenderId());
+        String requestId = UUID.randomUUID().toString();
+        Payload payload = new Payload();
+        payload.setContent(incoming.getMessageText());
+        payload.setContentType(incoming.getMessageType());
+        return new Request(requestId, user, null, payload);
     }
 
-    private Request resolveRequest(WebhookPayload webhookPayload) {
-        Sender sender = webhookPayload.getSender();
-        User user = null;
-        if (Objects.nonNull(sender)) {
-            user = new User(sender.getId());
-        }
-        Payload payload = null;
-        if (Objects.nonNull(webhookPayload.getMessage())) {
-            payload = new Payload(
-                    webhookPayload.getMessage().getText(),
-                    webhookPayload.getMessage().getType(),
-					null, null);
+    private ResponseEntity<?> resolveResponse(Response response) {
+        for (ResponseCase<?> responseCase : responseCases) {
+            if (responseCase.evaluate(response)) {
+                responseCase.provideResponse(response);
+                return ResponseEntity.ok().build();
+            }
         }
 
-        // TODO: add context
-        //Context context = contextManager.getContext(user.getId());
-        return new Request(user, UUID.randomUUID().toString(), new Context(), payload);
+        throw new IllegalStateException("Response case is not handled");
     }
 
 }

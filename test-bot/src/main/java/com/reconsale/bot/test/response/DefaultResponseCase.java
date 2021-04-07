@@ -13,7 +13,7 @@ public class DefaultResponseCase extends AbstractResponseCase {
 	public Void provideResponse(Response response) {	    
     	ViberBot viberBot = viberBotManager.viberBot(botToken);
 		String text = viberVisualizer.createMessage(response.getRefefence(), response.getText());
-		viberBot.messageForUser(response.getUser()).postText(text);
+		viberBot.messageForUser(response.getUser().getId()).postText(text);
 		return null;
 	}
 

@@ -7,12 +7,12 @@ import lombok.Data;
 @AllArgsConstructor
 public class Request {
 
-	private User user;
-	
-	private String id;
-	
-	private Context context;
-	
-	private Payload payload;
-	
+    private String id;
+
+    private User user;
+
+    private Context context;
+
+    private Payload payload;
+
 }

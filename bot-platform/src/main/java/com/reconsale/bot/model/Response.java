@@ -13,7 +13,7 @@ public class Response {
 
 	private String refefence;
 	
-	private String user;
+	private User user;
 	
 	private String text;
 	

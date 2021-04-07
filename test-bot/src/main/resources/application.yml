@@ -1,0 +1,7 @@
+server:
+  port: 8090
+
+viber:
+  bot:
+    authToken: ${VIBER_AUTH_TOKEN}
+    webhookUrl: https://a0a03ec98004.ngrok.io/api/viber/webhook
