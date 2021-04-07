@@ -4,4 +4,4 @@ server:
 viber:
   bot:
     authToken: ${VIBER_AUTH_TOKEN}
-    webhookUrl: https://a0a03ec98004.ngrok.io/api/viber/webhook
+    webhookUrl: https://014f0c1cf290.ngrok.io/api/viber/webhook
