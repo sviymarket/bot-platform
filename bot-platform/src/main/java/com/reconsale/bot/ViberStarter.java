@@ -1,27 +1,29 @@
 package com.reconsale.bot;
 
-import javax.annotation.PostConstruct;
-
+import com.reconsale.viber4j.ViberBotManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.reconsale.viber4j.ViberBotManager;
+import static com.reconsale.bot.constant.PropertiesNaming.VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE;
+import static com.reconsale.bot.constant.PropertiesNaming.VIBER_BOT_WEBHOOK_URL_PROPERTY_REFERENCE;
 
+@Slf4j
 @Component
 public class ViberStarter {
 
-	@Value("${viberAuthToken}")
-	private String botToken;
-	
-    @Value("123")
-    private String webHookUrl;
-	
-	private ViberBotManager viberBotManager = new ViberBotManager();
-	
-	@PostConstruct
-	public void registerBot() {
-		viberBotManager.viberBot(botToken).setWebHook(webHookUrl);
-	}
+    @Value(VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE)
+    private String authToken;
+
+    @Value(VIBER_BOT_WEBHOOK_URL_PROPERTY_REFERENCE)
+    private String webhookUrl;
+
+    @Autowired
+    private ViberBotManager viberBotManager;
+
+    public void registerBot() {
+        viberBotManager.viberBot(authToken).setWebHook(webhookUrl);
+    }
 
 }

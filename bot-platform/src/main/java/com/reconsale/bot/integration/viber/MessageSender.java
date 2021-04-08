@@ -16,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static com.reconsale.bot.constant.PropertiesNaming.VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE;
+
 @Slf4j
 @Component
 public class MessageSender {
@@ -23,7 +25,7 @@ public class MessageSender {
     private final static String URL = "https://chatapi.viber.com/pa/send_message";
     private final static String VIBER_AUTH_HEADER_NAME = "X-Viber-Auth-Token";
 
-    @Value("${viberAuthToken}")
+    @Value(VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE)
     private String viberAuthToken;
 
     @Autowired

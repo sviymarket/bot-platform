@@ -1,4 +1,4 @@
-package com.reconsale.bot.engine.handler;
+package com.reconsale.bot.engine;
 
 import com.reconsale.bot.model.Request;
 import com.reconsale.bot.model.Response;
