@@ -1,7 +1,9 @@
 package com.reconsale.viber4j;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.reconsale.viber4j.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 class ViberBotImpl implements ViberBot {
@@ -57,14 +60,17 @@ class ViberBotImpl implements ViberBot {
                 viberEvent -> eventsArray.add(viberEvent.name()));
         message.add(ViberConstants.EVENT_TYPES, eventsArray);
         String response = null;
+        Integer status = null;
         try {
             response = viberClient.post(
                     message.toString(), ViberConstants.VIBER_REGISTRATION_URL);
             logger.info("Registration web-hook {} response {}", webHookUrl, response);
+            status = JsonUtils.getJsonValueInt(JsonUtils.parseString(response), ViberConstants.STATUS);
+
         } catch (IOException e) {
             logger.error("Web-hook {} registration failed {}", webHookUrl, e);
         }
-        return StringUtils.isNotEmpty(response);
+        return Objects.nonNull(status) && status.equals(0);
     }
 
     public boolean removeWebHook() {

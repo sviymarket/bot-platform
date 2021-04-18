@@ -1,7 +1,7 @@
 package com.reconsale.bot.integration;
 
 import com.reconsale.bot.engine.ContextManager;
-import com.reconsale.bot.engine.Dispatcher;
+import com.reconsale.bot.engine.RequestDispatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public abstract class Connector {
     protected List<ResponseCase<?>> responseCases;
 
     @Autowired
-    protected Dispatcher dispatcher;
+    protected RequestDispatcher requestDispatcher;
 
     @Autowired
     protected ContextManager contextManager;

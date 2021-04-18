@@ -22,8 +22,8 @@ public class ViberStarter {
     @Autowired
     private ViberBotManager viberBotManager;
 
-    public void registerBot() {
-        viberBotManager.viberBot(authToken).setWebHook(webhookUrl);
+    public boolean registerBot() {
+        return viberBotManager.viberBot(authToken).setWebHook(webhookUrl);
     }
 
 }

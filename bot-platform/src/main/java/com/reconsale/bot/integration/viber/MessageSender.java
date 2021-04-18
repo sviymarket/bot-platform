@@ -2,8 +2,8 @@ package com.reconsale.bot.integration.viber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.reconsale.bot.model.viber.Sender;
-import com.reconsale.bot.model.viber.TextMessage;
+import com.reconsale.bot.model.viber.output.TextMessage;
+import com.reconsale.bot.model.viber.input.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,11 +71,11 @@ public class MessageSender {
         return textMessage;
     }
 
-    private Sender me() {
-        Sender sender = new Sender();
+    private User me() {
+        User sender = new User();
         sender.setName("Bot");
         try {
-            sender.setAvatar(new URI(""));
+            sender.setAvatar(new URI("").toString());
         } catch (URISyntaxException e) {
             // Ignore
         }

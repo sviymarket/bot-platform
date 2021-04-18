@@ -1,5 +1,6 @@
 package com.reconsale.bot.model;
 
+import com.reconsale.bot.model.request.User;
 import com.reconsale.bot.model.response.Carousel;
 import com.reconsale.bot.model.response.Menu;
 import com.reconsale.bot.model.response.Tile;
@@ -11,7 +12,7 @@ import lombok.Data;
 @Builder
 public class Response {
 
-	private String refefence;
+	private String reference;
 	
 	private User user;
 	
