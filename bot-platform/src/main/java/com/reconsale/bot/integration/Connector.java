@@ -2,6 +2,7 @@ package com.reconsale.bot.integration;
 
 import com.reconsale.bot.engine.ContextManager;
 import com.reconsale.bot.engine.RequestDispatcher;
+import com.reconsale.bot.engine.ResponseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

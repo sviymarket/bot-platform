@@ -4,8 +4,9 @@ server:
 viber:
   bot:
     authToken: ${VIBER_AUTH_TOKEN}
-    webhookUrl: https://a117972594e2.ngrok.io/api/viber/webhook
+    webhookUrl: https://68525645a7cf.ngrok.io/api/viber/webhook
 
 logging:
   level:
     root: INFO
+    com.reconsale.sm: DEBUG
