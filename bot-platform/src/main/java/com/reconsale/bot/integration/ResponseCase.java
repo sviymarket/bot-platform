@@ -6,5 +6,5 @@ public interface ResponseCase<T> {
 
 	T provideResponse(Response response);
 	
-	boolean evaluate(Response reponse);
+	boolean evaluate(Response response);
 }

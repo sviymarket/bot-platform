@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.reconsale.bot.model.Context;
+import com.reconsale.bot.model.request.Context;
 
 @Component
 public class ContextManager {

@@ -60,4 +60,5 @@ public class BotConfiguration {
         Collections.sort(beanList, org.springframework.core.annotation.AnnotationAwareOrderComparator.INSTANCE);
         return beanList;
     }
+
 }

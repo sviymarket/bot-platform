@@ -1,4 +1,4 @@
-package com.reconsale.bot.model;
+package com.reconsale.bot.model.request;
 
 import java.util.Map;
 

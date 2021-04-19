@@ -18,7 +18,13 @@ public class ApplicationStartupRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("Application started!");
         log.info("Setting viber webhook...");
-        viberStarter.registerBot();
-        log.info("Webhook set!");
+        boolean registeredSuccessfully = viberStarter.registerBot();
+        if (registeredSuccessfully) {
+            log.info("Webhook set!");
+        } else {
+            log.error("Failed to set a webhook!");
+        }
+
+
     }
 }

@@ -2,6 +2,7 @@ package com.reconsale.viber4j.outgoing;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import com.reconsale.viber4j.SenderInfo;
@@ -19,6 +20,8 @@ import java.util.Optional;
  *
  * @author n.zvyagintsev
  */
+
+@Slf4j
 public class OutgoingImpl implements Outgoing {
 
     private final ViberClient viberClient;
@@ -205,8 +208,10 @@ public class OutgoingImpl implements Outgoing {
 
     private boolean sendMessage() {
         try {
+            log.info("Sending message: " + message.toString());
             String response = viberClient.post(
                     message.toString(), sendingUrl);
+            log.info("Got viber response: " + response);
             return StringUtils.isNotEmpty(response);
         } catch (IOException e) {
             return false;
