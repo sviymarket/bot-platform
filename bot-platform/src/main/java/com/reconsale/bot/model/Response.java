@@ -8,6 +8,8 @@ import com.reconsale.bot.model.viber.output.RichMedia;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class Response {
@@ -23,5 +25,5 @@ public class Response {
     private RichMedia richMedia;
 
     private Carousel carousel;
-    private Tile tile;
+    private List<Tile> tiles;
 }

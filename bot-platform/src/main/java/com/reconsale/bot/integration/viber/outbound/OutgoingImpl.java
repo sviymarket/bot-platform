@@ -19,6 +19,8 @@ import java.util.Optional;
 @Slf4j
 public class OutgoingImpl implements Outgoing {
 
+    private static final int MIN_API_VERSION = 3;
+
     private final ViberClient viberClient;
     private final JsonObject message;
 
@@ -29,7 +31,7 @@ public class OutgoingImpl implements Outgoing {
         this.message = message;
         this.viberClient = viberClient;
         // default min_api_version
-        message.addProperty(ViberConstants.MIN_API_VERSION, 1);
+        message.addProperty(ViberConstants.MIN_API_VERSION, MIN_API_VERSION);
         if (sender != null)
             message.add(ViberConstants.SENDER, sender.toJson());
         this.sendingUrl = sendingUrl;

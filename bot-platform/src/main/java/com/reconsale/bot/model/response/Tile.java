@@ -1,5 +1,6 @@
 package com.reconsale.bot.model.response;
 
+import com.reconsale.bot.model.response.styling.TileStyle;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,11 +8,14 @@ import lombok.Setter;
 @Setter
 public class Tile {
 
-    private String contentImage; // 6 3
-    private String text; // 6 2
+    private String contentImage;
+    private String text;
+    private Button button;
+    private String bottomText;
 
-    private Button button; // 6 1
+    // TODO: decide if we want specific url for image, text and button
+    private String tileUrl;
 
-    private String bottomText; // 6 1
+    private TileStyle tileStyle;
 
 }

@@ -10,4 +10,6 @@ public class Message {
     private String text;
     private String type;
 
+    private Contact contact;
+
 }

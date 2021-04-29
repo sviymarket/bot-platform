@@ -5,9 +5,13 @@ import com.reconsale.bot.engine.ResponseCase;
 import com.reconsale.bot.integration.viber.ViberBotManager;
 import com.reconsale.bot.model.response.Button;
 import com.reconsale.bot.model.response.Menu;
+import com.reconsale.bot.model.response.Tile;
 import com.reconsale.bot.model.response.styling.ButtonStyle;
 import com.reconsale.bot.model.response.styling.MenuStyle;
+import com.reconsale.bot.model.response.styling.TileStyle;
+import com.reconsale.bot.model.viber.output.RichMedia;
 import com.reconsale.bot.model.viber.output.keyboard.BtnActionType;
+import com.reconsale.bot.model.viber.output.keyboard.ButtonContainer;
 import com.reconsale.bot.model.viber.output.keyboard.ViberButton;
 import com.reconsale.bot.model.viber.output.keyboard.ViberKeyboard;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static com.reconsale.bot.constant.Properties.VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE;
 import static com.reconsale.bot.model.constant.Buttons.DEFAULT_BUTTON_WIDTH;
+import static com.reconsale.bot.model.constant.Buttons.DEFAULT_TILE_HEIGHT;
 import static com.reconsale.bot.model.constant.Colors.*;
 
 public abstract class AbstractResponseCase implements ResponseCase<Object> {
@@ -33,6 +38,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
     private MenuStyle defaultMenuStyle = new MenuStyle(true, GREY);
     private ButtonStyle defaultButtonStyle = new ButtonStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, DEFAULT_BUTTON_WIDTH);
+    private TileStyle defaulttileStyle = new TileStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, 5, 0, 2, 0);
 
     protected ViberKeyboard fromMenu(Menu menu) {
         if (Objects.isNull(menu) || CollectionUtils.isEmpty(menu.getButtons())) {
@@ -66,6 +72,58 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return viberKeyboard;
     }
 
+    protected RichMedia fromTiles(List<Tile> tiles) {
+        if (CollectionUtils.isEmpty(tiles)) {
+            return null;
+        }
+
+        RichMedia richMedia = new RichMedia();
+        richMedia.setBgColor(RED);
+        richMedia.setDefaultHeight(true);
+        richMedia.setButtonsGroupColumns(6); // ?
+        richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
+        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+
+        ResourceBundle resourceBundle = getResourceBundle();
+
+        for (Tile tile : tiles) {
+            TileStyle tileStyle = tile.getTileStyle();
+            if (Objects.isNull(tileStyle)) {
+                tileStyle = defaulttileStyle;
+            }
+
+            String tileUrl = tile.getTileUrl();
+            ViberButton imageButton = new ViberButton(tileUrl);
+            if (Objects.nonNull(tileUrl)) {
+                imageButton.setActionType(BtnActionType.OPEN_URL);
+            }
+            imageButton.setBgColor(tileStyle.getBackgroundColor());
+            imageButton.setImage(tile.getContentImage());
+            imageButton.setColumns(DEFAULT_BUTTON_WIDTH);
+            imageButton.setRows(tileStyle.getImageHeight());
+
+
+            ViberButton button = fromButton(tile.getButton(), getResourceBundle());
+            if (Objects.nonNull(tileUrl)) {
+                button = new ViberButton(tileUrl);
+                button.setActionType(BtnActionType.OPEN_URL);
+                String localizedLabel = resourceBundle.getString(tile.getButton().getId());
+                button.setText(buildText(localizedLabel, tileStyle.getTextColor()));
+
+            }
+            button.setBgColor(tileStyle.getBackgroundColor());
+            button.setColumns(DEFAULT_BUTTON_WIDTH);
+            button.setRows(tileStyle.getButtonHeight());
+            button.setTextSize(tileStyle.getTextSize());
+            button.setTextHAlign(ViberButton.TextAlign.MIDDLE);
+
+            richMedia.addButton(imageButton);
+            richMedia.addButton(button);
+        }
+
+        return richMedia;
+    }
+
     protected ViberButton fromButton(Button button, ResourceBundle resourceBundle) {
         ButtonStyle buttonStyle = button.getButtonStyle();
         if (Objects.isNull(buttonStyle)) {
@@ -90,7 +148,8 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
     protected ResourceBundle getResourceBundle() {
         // TODO: build UA locale
-        return ResourceBundle.getBundle("messages", Locale.FRANCE);
+        Locale locale = new Locale("ukr", "UA");
+        return ResourceBundle.getBundle("messages", locale);
     }
 
 }
