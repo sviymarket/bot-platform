@@ -1,9 +1,9 @@
 package com.reconsale.bot.integration;
 
-import com.google.gson.Gson;
 import com.reconsale.bot.engine.ResponseCase;
 import com.reconsale.bot.integration.viber.ViberBotManager;
 import com.reconsale.bot.model.response.Button;
+import com.reconsale.bot.model.response.ButtonActionType;
 import com.reconsale.bot.model.response.Menu;
 import com.reconsale.bot.model.response.Tile;
 import com.reconsale.bot.model.response.styling.ButtonStyle;
@@ -33,8 +33,6 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
     @Value(VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE)
     protected String botToken;
-
-    private Gson gson = new Gson();
 
     private MenuStyle defaultMenuStyle = new MenuStyle(true, GREY);
     private ButtonStyle defaultButtonStyle = new ButtonStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, DEFAULT_BUTTON_WIDTH);
@@ -93,10 +91,8 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
             }
 
             String tileUrl = tile.getTileUrl();
-            ViberButton imageButton = new ViberButton(tileUrl);
-            if (Objects.nonNull(tileUrl)) {
-                imageButton.setActionType(BtnActionType.OPEN_URL);
-            }
+            ViberButton imageButton = new ViberButton("");
+            imageButton.setActionType(BtnActionType.NONE);
             imageButton.setBgColor(tileStyle.getBackgroundColor());
             imageButton.setImage(tile.getContentImage());
             imageButton.setColumns(DEFAULT_BUTTON_WIDTH);
@@ -129,8 +125,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         if (Objects.isNull(buttonStyle)) {
             buttonStyle = defaultButtonStyle;
         }
-        ViberButton viberButton = new ViberButton(gson.toJson(button.getButtonAction()));
-        viberButton.setActionType(BtnActionType.REPLY);
+
+        ViberButton viberButton = new ViberButton(button.getAction());
+        viberButton.setActionType(getActionType(button));
+
         viberButton.setBgColor(buttonStyle.getBackgroundColor());
         viberButton.setTextSize(buttonStyle.getTextSize());
 
@@ -142,13 +140,31 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return viberButton;
     }
 
+    private BtnActionType getActionType(Button button) {
+        BtnActionType resolvedActionType = BtnActionType.NONE;
+
+        if (Objects.isNull(button) || Objects.isNull(button.getButtonActionType())) {
+            return resolvedActionType;
+        }
+
+        ButtonActionType buttonActionType = button.getButtonActionType();
+        if (ButtonActionType.SHARE_PHONE == buttonActionType) {
+            resolvedActionType = BtnActionType.SHARE_PHONE;
+        } else if (ButtonActionType.OPEN_URL == buttonActionType) {
+            resolvedActionType = BtnActionType.OPEN_URL;
+        } else if (ButtonActionType.REPLY == buttonActionType) {
+            resolvedActionType = BtnActionType.REPLY;
+        }
+        return resolvedActionType;
+    }
+
     private String buildText(String label, String color) {
         return "<font color='" + color + "'>" + label + "</font>";
     }
 
     protected ResourceBundle getResourceBundle() {
         // TODO: build UA locale
-        Locale locale = new Locale("ukr", "UA");
+        Locale locale = new Locale("uk", "UA");
         return ResourceBundle.getBundle("messages", locale);
     }
 

@@ -1,29 +1,33 @@
 package com.reconsale.bot.model.response;
 
+import com.google.gson.Gson;
 import com.reconsale.bot.model.response.styling.ButtonStyle;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import static com.reconsale.bot.model.constant.Buttons.PRESSED;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Button {
 
     private String id;
-    private ButtonAction buttonAction;
+    private String action;
+    private ButtonActionType buttonActionType;
     private ButtonStyle buttonStyle;
 
-    public Button(String id, ButtonStyle buttonStyle) {
-        this.id = id;
-        this.buttonAction = new ButtonAction(PRESSED + ":" + id);
-        this.buttonStyle = buttonStyle;
-    }
-
-    public Button(String id, ButtonAction buttonAction, ButtonStyle buttonStyle) {
-        this.id = id;
-        this.buttonAction = buttonAction;
-        this.buttonStyle = buttonStyle;
+    // TODO: find a better way
+    public static Button navigationButton(String id, ButtonStyle buttonStyle) {
+        Button button = new Button();
+        button.setId(id);
+        button.setAction(new Gson().toJson(new ButtonAction(PRESSED + ":" + id)));
+        button.setButtonActionType(ButtonActionType.REPLY);
+        button.setButtonStyle(buttonStyle);
+        return button;
     }
 
 }

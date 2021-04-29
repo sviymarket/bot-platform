@@ -22,7 +22,7 @@ public class MyCardHandler implements Handler {
     @Override
     public Response handle(Request request) {
         ButtonStyle buttonStyle = new ButtonStyle(Colors.RED, ViberButton.TextSize.MEDIUM, Colors.WHITE, 6);
-        Button b1 = new Button(MenuItems.MAIN_MENU, buttonStyle);
+        Button b1 = Button.navigationButton(MenuItems.MAIN_MENU, buttonStyle);
 
         Menu menu = new Menu();
         menu.setButtons(Arrays.asList(b1));

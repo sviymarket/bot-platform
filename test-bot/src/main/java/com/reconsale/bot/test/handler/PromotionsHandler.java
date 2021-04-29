@@ -71,11 +71,10 @@ public class PromotionsHandler implements Handler {
         richMedia.addButton(b3);
 
         ButtonStyle buttonStyle = new ButtonStyle(Colors.RED, ViberButton.TextSize.MEDIUM, Colors.WHITE, 6);
-        Button b11 = new Button(MAIN_MENU, buttonStyle);
+        Button b11 = Button.navigationButton(MAIN_MENU, buttonStyle);
 
         Menu menu = new Menu();
         menu.setButtons(Arrays.asList(b11));
-
 
         return Response.builder()
                 .user(request.getUser())
