@@ -25,5 +25,6 @@ public class Response {
     private RichMedia richMedia;
 
     private Carousel carousel;
+    
     private List<Tile> tiles;
 }

@@ -44,7 +44,7 @@ public class RequestDispatcher {
         return handler.handle(request);
     }
 
-    private String toKey(Request request) {
+    protected String toKey(Request request) {
         String key = null;
         if (Objects.nonNull(request) && Objects.nonNull(request.getPayload())) {
             Payload payload = request.getPayload();
