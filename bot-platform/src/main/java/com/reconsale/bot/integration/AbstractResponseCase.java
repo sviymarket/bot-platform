@@ -69,7 +69,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
                 viberKeyboard.addButton(vb));
 
         // Disallow user input
-        viberKeyboard.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN);
+        //viberKeyboard.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN);
 
         return viberKeyboard;
     }
