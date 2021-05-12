@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class Carousel {
-	
-	private List<Tile> tile;
+
+    private List<Tile> tile;
 
 }

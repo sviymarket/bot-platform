@@ -1,13 +1,12 @@
 package com.reconsale.bot.test;
 
-import org.springframework.stereotype.Component;
-
 import com.reconsale.bot.integration.Visualizer;
 import com.reconsale.bot.model.response.Carousel;
 import com.reconsale.bot.model.response.Menu;
 import com.reconsale.bot.model.response.Tile;
-import com.reconsale.viber4j.keyboard.RichMedia;
-import com.reconsale.viber4j.keyboard.ViberKeyboard;
+import com.reconsale.bot.model.viber.output.RichMedia;
+import com.reconsale.bot.model.viber.output.keyboard.ViberKeyboard;
+import org.springframework.stereotype.Component;
 
 @Component
 public class TestVisualizer implements Visualizer<RichMedia, String, RichMedia, ViberKeyboard> {

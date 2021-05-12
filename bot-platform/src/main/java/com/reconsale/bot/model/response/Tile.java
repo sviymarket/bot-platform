@@ -1,15 +1,17 @@
 package com.reconsale.bot.model.response;
 
-import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.Data;
-
-@Data
+@Getter
+@Setter
 public class Tile {
-	private String text;	
-	private String img;
-	private Button button;
-	
-	private Map<String, String> labels;
-	
+
+    private String contentImage; // 6 3
+    private String text; // 6 2
+
+    private Button button; // 6 1
+
+    private String bottomText; // 6 1
+
 }

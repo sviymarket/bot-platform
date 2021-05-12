@@ -1,38 +1,37 @@
 package com.reconsale.bot.test.response;
 
-import com.reconsale.bot.integration.viber.AbstractResponseCase;
+import com.reconsale.bot.integration.AbstractResponseCase;
+import com.reconsale.bot.integration.viber.ViberBot;
 import com.reconsale.bot.model.Response;
-import com.reconsale.bot.model.response.Menu;
-import com.reconsale.viber4j.ViberBot;
-import com.reconsale.viber4j.keyboard.ViberKeyboard;
+import com.reconsale.bot.model.viber.output.keyboard.ViberKeyboard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-import static com.reconsale.bot.test.constant.MessagesNaming.MY_CARD;
+import static com.reconsale.bot.test.constant.MenuItems.MAIN_MENU;
+import static com.reconsale.bot.test.constant.MenuItems.MY_CARD;
 
 
 @Slf4j
 @Component
 public class MyCardResponseCase extends AbstractResponseCase {
+
     @Override
     public Object provideResponse(Response response) {
 
-        Menu menu = response.getMenu();
         if (Objects.nonNull(response.getUser())) {
             ViberBot viberBot = viberBotManager.viberBot(botToken);
-
-            log.info("Sending navigation menu response: " + response);
-
-            ViberKeyboard viberKeyboard = fromMenu(menu);
-            String yourCardMessage = getResourceBundle().getString(MY_CARD);
-            //viberBot.messageForUser(response.getUser().getId())
-                //.postPicture("/resources/images/card.png", "card");
+            ViberKeyboard viberKeyboard = fromMenu(response.getMenu());
 
             viberBot.messageForUser(response.getUser().getId())
-                //.postText("Sending you to the main menu", viberKeyboard);
-                .postText(yourCardMessage + " 123123123", viberKeyboard);
+                    .postPicture("https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/UPC_A.svg/1200px-UPC_A.svg.png",
+                            "card");
+
+            String yourCardMessage = getResourceBundle().getString(MAIN_MENU);
+            viberBot.messageForUser(response.getUser().getId())
+                    //.postText("Sending you to the main menu", viberKeyboard);
+                    .postText(yourCardMessage, viberKeyboard);
         } else {
             log.info("Don't have user id to send anything...");
         }
@@ -41,7 +40,7 @@ public class MyCardResponseCase extends AbstractResponseCase {
 
     @Override
     public boolean evaluate(Response response) {
-        return Objects.nonNull(response) && Objects.nonNull(response.getMenu())
-                && (response.getMenu().getButtons().size() == 1);
+        return Objects.nonNull(response) && MY_CARD.equals(response.getReference());
     }
+
 }

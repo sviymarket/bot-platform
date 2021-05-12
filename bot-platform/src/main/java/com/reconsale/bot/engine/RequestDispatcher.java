@@ -15,8 +15,9 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.reconsale.bot.constant.BeansNaming.HANDLERS_MAP;
+import static com.reconsale.bot.constant.Beans.HANDLERS_MAP;
 import static com.reconsale.bot.constant.HandlerKeys.CONVERSATION_STARTED_HANDLER_KEY;
+import static com.reconsale.bot.constant.HandlerKeys.UNDEFINED;
 
 @Slf4j
 @Component
@@ -30,11 +31,10 @@ public class RequestDispatcher {
     private Map<String, Handler> mappings;
 
     public Response dispatch(Request request) {
-        log.debug("Dispatching request: " + request);
+        log.info("Dispatching request: " + request);
         String key = toKey(request);
         log.info("Handler key: " + key);
 
-        log.debug("Got mappings: " + mappings);
         Handler handler = mappings.get(key);
         if (Objects.isNull(handler)) {
             handler = mappings.get(CONVERSATION_STARTED_HANDLER_KEY);
@@ -52,7 +52,6 @@ public class RequestDispatcher {
             if (Objects.nonNull(content)) {
                 ButtonAction buttonAction = getButtonAction(content);
                 if (Objects.nonNull(buttonAction)) {
-                    log.info("User pressed a button! " + buttonAction.getData());
                     return buttonAction.getData();
                 }
             }
@@ -61,7 +60,7 @@ public class RequestDispatcher {
             String contentType = payload.getContentType();
             String eventType = payload.getEventType();
 
-            key = (StringUtils.isNotEmpty(contentType) ? contentType : "undefined") + "-" + eventType;
+            key = (StringUtils.isNotEmpty(contentType) ? contentType : UNDEFINED) + "-" + eventType;
         }
         return key;
 
@@ -72,7 +71,7 @@ public class RequestDispatcher {
         try {
             buttonAction = objectMapper.readValue(inputString, ButtonAction.class);
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
+            //log.error("Failed to deserialize input string: " + inputString);
         }
         return buttonAction;
     }

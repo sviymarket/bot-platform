@@ -1,30 +1,30 @@
 package com.reconsale.bot.model.response;
 
+import com.reconsale.bot.model.response.styling.ButtonStyle;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import static com.reconsale.bot.model.constant.Buttons.PRESSED;
 
 @Getter
 @Setter
 public class Button {
 
     private String id;
-    private String label;
     private ButtonAction buttonAction;
-    private List<Button> buttons;
+    private ButtonStyle buttonStyle;
 
-    public Button(String id, String label, ButtonAction buttonAction) {
+    public Button(String id, ButtonStyle buttonStyle) {
         this.id = id;
-        this.label = label;
-        this.buttonAction = buttonAction;
+        this.buttonAction = new ButtonAction(PRESSED + ":" + id);
+        this.buttonStyle = buttonStyle;
     }
 
-    public Button(String id, String label, ButtonAction buttonAction, List<Button> buttons) {
+    public Button(String id, ButtonAction buttonAction, ButtonStyle buttonStyle) {
         this.id = id;
-        this.label = label;
         this.buttonAction = buttonAction;
-        this.buttons = buttons;
+        this.buttonStyle = buttonStyle;
     }
 
 }
+

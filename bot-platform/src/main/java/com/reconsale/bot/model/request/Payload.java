@@ -5,15 +5,15 @@ import lombok.Data;
 @Data
 public class Payload {
 
-	private String eventType;
+    private String eventType;
 
-	private String content;
+    private String content;
 
-	private String contentType;
+    private String contentType;
 
-	private String parameter;
-	
-	private String action;
-	
-	private String reference;
+    private String parameter;
+
+    private String action;
+
+    private String reference;
 }

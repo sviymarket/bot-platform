@@ -5,7 +5,7 @@ import com.reconsale.bot.model.Response;
 
 public interface Handler {
 
-	Response handle(Request request);
-	
-	String mapping();
+    Response handle(Request request);
+
+    String mapping();
 }
