@@ -10,6 +10,7 @@ import com.reconsale.bot.model.Response;
 import com.reconsale.bot.model.request.Context;
 import com.reconsale.bot.model.request.Payload;
 import com.reconsale.bot.model.request.User;
+import com.reconsale.bot.model.viber.input.Message;
 import com.reconsale.bot.model.viber.input.WebhookRequestPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +73,13 @@ public class ViberConnector extends Connector {
         payload.setEventType(webhookRequestPayload.getEvent());
 
         if (Objects.nonNull(webhookRequestPayload.getMessage())) {
-            payload.setContent(webhookRequestPayload.getMessage().getText());
-            payload.setContentType(webhookRequestPayload.getMessage().getType());
+            Message message = webhookRequestPayload.getMessage();
+            payload.setContent(message.getText());
+            payload.setContentType(message.getType());
+
+            if (Objects.nonNull(message.getContact())) {
+                user.setPhoneNumber(message.getContact().getPhoneNumber());
+            }
         }
 
         Request request = new Request(requestId, user, context, payload);

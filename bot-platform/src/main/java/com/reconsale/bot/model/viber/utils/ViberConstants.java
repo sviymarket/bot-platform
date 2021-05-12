@@ -83,4 +83,5 @@ public class ViberConstants {
     public static final String BTN_TEXT_BG_GRADIENT_COLOR = "TextBgGradientColor";
     public static final String BTN_OPEN_URL_TYPE = "OpenURLType";
     public static final String BTN_INTERNAL_BROWSER = "InternalBrowser";
+    public static final String SILENT = "Silent";
 }

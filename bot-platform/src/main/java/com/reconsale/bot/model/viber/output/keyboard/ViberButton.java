@@ -28,6 +28,7 @@ public class ViberButton {
     private OpenURLType openURLType;
     private InternalBrowser internalBrowser;
     private Integer[] textPaddings;
+    private boolean silent;
 
     public ViberButton(String actionBody) {
         this.actionBody = actionBody;
@@ -177,6 +178,11 @@ public class ViberButton {
         return this;
     }
 
+    public ViberButton setSilent(boolean silent) {
+        this.silent = silent;
+        return this;
+    }
+
     /**
      * Creates json object that contains all the properties of the Viber button
      *
@@ -226,6 +232,8 @@ public class ViberButton {
                     ViberConstants.BTN_OPEN_URL_TYPE, openURLType.name().toLowerCase());
         if (internalBrowser != null)
             button.add(ViberConstants.BTN_INTERNAL_BROWSER, internalBrowser.toJson());
+        if (silent)
+            button.addProperty(ViberConstants.SILENT, silent);
         return button;
     }
 

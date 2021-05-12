@@ -67,6 +67,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         //viberKeyboard.setButtonsGroupRows(3);
         viberButtons.forEach(vb ->
                 viberKeyboard.addButton(vb));
+
+        // Disallow user input
+        viberKeyboard.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN);
+
         return viberKeyboard;
     }
 
@@ -112,9 +116,11 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
             button.setRows(tileStyle.getButtonHeight());
             button.setTextSize(tileStyle.getTextSize());
             button.setTextHAlign(ViberButton.TextAlign.MIDDLE);
+            button.setSilent(true);
 
             richMedia.addButton(imageButton);
             richMedia.addButton(button);
+
         }
 
         return richMedia;
@@ -136,6 +142,8 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         viberButton.setText(buildText(localizedLabel, buttonStyle.getTextColor()));
         viberButton.setColumns(buttonStyle.getWidth());
         viberButton.setRows(1);
+
+        viberButton.setSilent(true);
 
         return viberButton;
     }

@@ -23,8 +23,6 @@ import static com.reconsale.bot.test.constant.MenuItems.MAIN_MENU;
 @Component
 public class ConversationStartedHandler implements Handler {
 
-    private Gson gson = new Gson();
-
     @Override
     public Response handle(Request request) {
         // TODO: will contain registration or phone request flows
