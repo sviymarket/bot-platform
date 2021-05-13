@@ -2,72 +2,105 @@ package com.reconsale.bot.integration.viber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
+import com.reconsale.bot.engine.ResponseCase;
 import com.reconsale.bot.integration.Connector;
-import com.reconsale.bot.model.Context;
-import com.reconsale.bot.model.Payload;
 import com.reconsale.bot.model.Request;
-import com.reconsale.bot.model.User;
-import com.reconsale.bot.model.viber.Sender;
-import com.reconsale.bot.model.viber.WebhookPayload;
+import com.reconsale.bot.model.Response;
+import com.reconsale.bot.model.request.Context;
+import com.reconsale.bot.model.request.Payload;
+import com.reconsale.bot.model.request.User;
+import com.reconsale.bot.model.viber.input.Message;
+import com.reconsale.bot.model.viber.input.WebhookRequestPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+
+import static com.reconsale.bot.constant.EventTypes.CONVERSATION_STARTED;
+import static com.reconsale.bot.model.viber.utils.ViberConstants.MESSAGE;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/viber")
 public class ViberConnector extends Connector {
+
+    private final Set<String> handledEventTypes = Sets.newHashSet(MESSAGE, CONVERSATION_STARTED);
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @RequestMapping(method = RequestMethod.POST, path = "/webhook")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/viber/webhook")
     public void callback(@RequestBody String inputString) {
+        log.debug("Received input: " + inputString);
+        WebhookRequestPayload webhookRequestPayload = fromString(inputString);
+        log.debug("Deserialized into: " + webhookRequestPayload);
 
-        log.info("Received input: " + inputString);
+        String eventType = webhookRequestPayload.getEvent();
+        if (!handledEventTypes.contains(eventType)) {
+            log.debug("Skipping event type '" + eventType + "'...");
+            return;
+        }
 
-        WebhookPayload webhookPayload = toWebhookPayload(inputString);
+        Request request = resolveRequest(webhookRequestPayload);
+        Response response = requestDispatcher.dispatch(request);
 
-        log.info("Deserialzied as: " + webhookPayload);
-
-        Request request = resolveRequest(webhookPayload);
-        dispatcher.dispatch(request);
+        resolveResponse(response);
     }
 
-    private WebhookPayload toWebhookPayload(String string) {
-        WebhookPayload webhookPayload = null;
+    private WebhookRequestPayload fromString(String inputString) {
+        WebhookRequestPayload webhookRequestPayload = null;
         try {
-            webhookPayload = objectMapper.readValue(string, WebhookPayload.class);
+            webhookRequestPayload = objectMapper.readValue(inputString, WebhookRequestPayload.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            log.info("Failed to deserialize input: " + string);
+            log.error("Failed to deserialize input string: " + inputString);
+            log.error(e.getMessage());
         }
-        return webhookPayload;
+        return webhookRequestPayload;
     }
 
-    private Request resolveRequest(WebhookPayload webhookPayload) {
-        Sender sender = webhookPayload.getSender();
-        User user = null;
-        if (Objects.nonNull(sender)) {
-            user = new User(sender.getId());
-        }
-        Payload payload = null;
-        if (Objects.nonNull(webhookPayload.getMessage())) {
-            payload = new Payload(
-                    webhookPayload.getMessage().getText(),
-                    webhookPayload.getMessage().getType(),
-					null, null);
+    private Request resolveRequest(WebhookRequestPayload webhookRequestPayload) {
+        String requestId = UUID.randomUUID().toString();
+        User user = new User(webhookRequestPayload.getUser().getId());
+        Context context = null;
+        Payload payload = new Payload();
+        payload.setEventType(webhookRequestPayload.getEvent());
+
+        if (Objects.nonNull(webhookRequestPayload.getMessage())) {
+            Message message = webhookRequestPayload.getMessage();
+            payload.setContent(message.getText());
+            payload.setContentType(message.getType());
+
+            if (Objects.nonNull(message.getContact())) {
+                user.setPhoneNumber(message.getContact().getPhoneNumber());
+            }
         }
 
-        // TODO: add context
-        //Context context = contextManager.getContext(user.getId());
-        return new Request(user, UUID.randomUUID().toString(), new Context(), payload);
+        Request request = new Request(requestId, user, context, payload);
+        log.debug("Resolved request: " + request);
+        return request;
+    }
+
+    private ResponseEntity<?> resolveResponse(Response response) {
+        log.debug("Resolving response: " + response);
+        for (ResponseCase<?> responseCase : responseCases) {
+            if (responseCase.evaluate(response)) {
+                log.debug("Evaluated by: " + responseCase.getClass());
+                responseCase.provideResponse(response);
+                return ResponseEntity.ok().build();
+            }
+        }
+        //throw new IllegalStateException("Response case is not handled");
+
+        // Should be unreachable
+        log.info("Could not find Response Case for Response: " + response);
+        return null;
     }
 
 }

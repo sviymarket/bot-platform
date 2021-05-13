@@ -1,17 +1,16 @@
 package com.reconsale.bot.engine;
 
-import java.util.Map;
-
+import com.reconsale.bot.model.request.Context;
 import org.springframework.stereotype.Component;
 
-import com.reconsale.bot.model.Context;
+import java.util.Map;
 
 @Component
 public class ContextManager {
 
-	private Map<String, Context> contexts;
-	
-	public Context getContext(String user) {
-		return contexts.get(user);
-	}
+    private Map<String, Context> contexts;
+
+    public Context getContext(String user) {
+        return contexts.get(user);
+    }
 }

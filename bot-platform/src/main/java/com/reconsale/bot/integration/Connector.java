@@ -1,21 +1,21 @@
 package com.reconsale.bot.integration;
 
-import java.util.List;
-
+import com.reconsale.bot.engine.ContextManager;
+import com.reconsale.bot.engine.RequestDispatcher;
+import com.reconsale.bot.engine.ResponseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.reconsale.bot.engine.ContextManager;
-import com.reconsale.bot.engine.Dispatcher;
+import java.util.List;
 
 public abstract class Connector {
-	
-	@Autowired
-	protected List<ResponseCase<?>> responseCases;
-	
-	@Autowired
-	protected Dispatcher dispatcher;
-	
-	@Autowired
-	protected ContextManager contextManager;
+
+    @Autowired
+    protected List<ResponseCase<?>> responseCases;
+
+    @Autowired
+    protected RequestDispatcher requestDispatcher;
+
+    @Autowired
+    protected ContextManager contextManager;
 
 }

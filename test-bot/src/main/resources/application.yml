@@ -1,0 +1,12 @@
+server:
+  port: 8090
+
+viber:
+  bot:
+    authToken: ${VIBER_AUTH_TOKEN}
+    webhookUrl: https://59285f7f4bda.ngrok.io/api/viber/webhook
+
+logging:
+  level:
+    root: INFO
+    com.reconsale.sm: DEBUG

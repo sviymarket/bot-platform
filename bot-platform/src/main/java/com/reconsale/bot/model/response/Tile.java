@@ -1,15 +1,21 @@
 package com.reconsale.bot.model.response;
 
-import java.util.Map;
+import com.reconsale.bot.model.response.styling.TileStyle;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.Data;
-
-@Data
+@Getter
+@Setter
 public class Tile {
-	private String text;	
-	private String img;
-	private Button button;
-	
-	private Map<String, String> labels;
-	
+
+    private String contentImage;
+    private String text;
+    private Button button;
+    private String bottomText;
+
+    // TODO: decide if we want specific url for image, text and button
+    private String tileUrl;
+
+    private TileStyle tileStyle;
+
 }
