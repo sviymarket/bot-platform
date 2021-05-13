@@ -45,7 +45,7 @@ public class ViberConstants {
     public static final String ATTACHMENT_TYPE = "type";
     public static final String MESSAGE_TEXT = "text";
     public static final String MEDIA_URL = "media";
-    public static final String THUMBNAIL = "media";
+    public static final String THUMBNAIL = "thumbnail";
     public static final String TRACING_DATA = "tracking_data";
     public static final String ATTACHMENT_SIZE = "size";
     public static final String API_VERSION = "api_version";
