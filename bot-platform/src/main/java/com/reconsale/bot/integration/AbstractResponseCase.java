@@ -1,5 +1,6 @@
 package com.reconsale.bot.integration;
 
+import com.reconsale.bot.conf.UTF8Control;
 import com.reconsale.bot.engine.ResponseCase;
 import com.reconsale.bot.integration.viber.ViberBotManager;
 import com.reconsale.bot.model.response.Button;
@@ -173,7 +174,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
     protected ResourceBundle getResourceBundle() {
         // TODO: build UA locale
         Locale locale = new Locale("uk", "UA");
-        return ResourceBundle.getBundle("messages", locale);
+         return ResourceBundle.getBundle("messages", locale, new UTF8Control());
     }
 
 }
