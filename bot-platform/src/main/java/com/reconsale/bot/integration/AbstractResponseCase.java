@@ -1,12 +1,10 @@
 package com.reconsale.bot.integration;
 
+import com.google.gson.Gson;
 import com.reconsale.bot.conf.UTF8Control;
 import com.reconsale.bot.engine.ResponseCase;
 import com.reconsale.bot.integration.viber.ViberBotManager;
-import com.reconsale.bot.model.response.Button;
-import com.reconsale.bot.model.response.ButtonActionType;
-import com.reconsale.bot.model.response.Menu;
-import com.reconsale.bot.model.response.Tile;
+import com.reconsale.bot.model.response.*;
 import com.reconsale.bot.model.response.styling.ButtonStyle;
 import com.reconsale.bot.model.response.styling.MenuStyle;
 import com.reconsale.bot.model.response.styling.TileStyle;
@@ -15,6 +13,7 @@ import com.reconsale.bot.model.viber.output.keyboard.BtnActionType;
 import com.reconsale.bot.model.viber.output.keyboard.ButtonContainer;
 import com.reconsale.bot.model.viber.output.keyboard.ViberButton;
 import com.reconsale.bot.model.viber.output.keyboard.ViberKeyboard;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
@@ -22,9 +21,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.reconsale.bot.constant.HandlerKeys.KEY;
 import static com.reconsale.bot.constant.Properties.VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE;
-import static com.reconsale.bot.model.constant.Buttons.DEFAULT_BUTTON_WIDTH;
-import static com.reconsale.bot.model.constant.Buttons.DEFAULT_TILE_HEIGHT;
+import static com.reconsale.bot.model.constant.Buttons.*;
 import static com.reconsale.bot.model.constant.Colors.*;
 
 public abstract class AbstractResponseCase implements ResponseCase<Object> {
@@ -37,7 +36,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
     private MenuStyle defaultMenuStyle = new MenuStyle(true, GREY);
     private ButtonStyle defaultButtonStyle = new ButtonStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, DEFAULT_BUTTON_WIDTH);
-    private TileStyle defaulttileStyle = new TileStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, 5, 0, 2, 0);
+    private TileStyle defaultTileStyle = new TileStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, 7, 0, 0, 0);
 
     protected ViberKeyboard fromMenu(Menu menu) {
         if (Objects.isNull(menu) || CollectionUtils.isEmpty(menu.getButtons())) {
@@ -72,6 +71,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         // Disallow user input
 
         viberKeyboard.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN);
+        viberKeyboard.setBgColor(WHITE);
         return viberKeyboard;
     }
 
@@ -92,37 +92,91 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         for (Tile tile : tiles) {
             TileStyle tileStyle = tile.getTileStyle();
             if (Objects.isNull(tileStyle)) {
-                tileStyle = defaulttileStyle;
+                tileStyle = defaultTileStyle;
             }
 
             String tileUrl = tile.getTileUrl();
-            ViberButton imageButton = new ViberButton("");
-            imageButton.setActionType(BtnActionType.NONE);
+            ViberButton imageButton = new ViberButton(tileUrl);
+            imageButton.setActionType(BtnActionType.OPEN_URL);
             imageButton.setBgColor(tileStyle.getBackgroundColor());
             imageButton.setImage(tile.getContentImage());
             imageButton.setColumns(DEFAULT_BUTTON_WIDTH);
             imageButton.setRows(tileStyle.getImageHeight());
-
-
-            ViberButton button = fromButton(tile.getButton(), getResourceBundle());
-            if (Objects.nonNull(tileUrl)) {
-                button = new ViberButton(tileUrl);
-                button.setActionType(BtnActionType.OPEN_URL);
-                String localizedLabel = resourceBundle.getString(tile.getButton().getId());
-                button.setText(buildText(localizedLabel, tileStyle.getTextColor()));
-
-            }
-            button.setBgColor(tileStyle.getBackgroundColor());
-            button.setColumns(DEFAULT_BUTTON_WIDTH);
-            button.setRows(tileStyle.getButtonHeight());
-            button.setTextSize(tileStyle.getTextSize());
-            button.setTextHAlign(ViberButton.TextAlign.MIDDLE);
-            button.setSilent(true);
+            imageButton.setSilent(true);
 
             richMedia.addButton(imageButton);
-            richMedia.addButton(button);
 
+
+            if (tileStyle.getButtonHeight() > 0) {
+                ViberButton button = fromButton(tile.getButton(), getResourceBundle());
+                if (Objects.nonNull(tileUrl)) {
+                    button = new ViberButton(tileUrl);
+                    button.setActionType(BtnActionType.OPEN_URL);
+                    String localizedLabel = resourceBundle.getString(tile.getButton().getId());
+                    button.setText(buildText(localizedLabel, tileStyle.getTextColor()));
+
+                }
+                button.setBgColor(tileStyle.getBackgroundColor());
+                button.setColumns(DEFAULT_BUTTON_WIDTH);
+                button.setRows(tileStyle.getButtonHeight());
+                button.setTextSize(tileStyle.getTextSize());
+                button.setTextHAlign(ViberButton.TextAlign.MIDDLE);
+                button.setSilent(true);
+                button.setBgMediaType(ViberButton.BgMediaType.PICTURE);
+                richMedia.addButton(button);
+            }
         }
+
+        return richMedia;
+    }
+
+    protected RichMedia fromButtonTiles(List<ButtonTile> buttonTiles) {
+        if (CollectionUtils.isEmpty(buttonTiles)) {
+            return null;
+        }
+
+        RichMedia richMedia = new RichMedia();
+        richMedia.setBgColor(WHITE);
+        richMedia.setDefaultHeight(true);
+        richMedia.setButtonsGroupColumns(6); // ?
+        richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
+        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+
+        for (ButtonTile buttonTile : buttonTiles) {
+            for (Button button : buttonTile.getButtons()) {
+                ViberButton imageButton = new ViberButton("");
+                imageButton.setActionType(BtnActionType.NONE);
+                //imageButton.setImage(button.getBackgroundImage());
+                imageButton.setBgMedia(button.getBackgroundImage());
+
+                imageButton.setRows(button.getButtonHeight());
+                imageButton.setColumns(DEFAULT_BUTTON_WIDTH);
+                if (Objects.nonNull(button.getButtonWidth())) {
+                    imageButton.setColumns(button.getButtonWidth());
+                }
+
+                ButtonStyle buttonStyle = button.getButtonStyle();
+                if (Objects.nonNull(buttonStyle)) {
+                    imageButton.setBgColor(buttonStyle.getBackgroundColor());
+                    if (button.isBoldText()) {
+                        imageButton.setText(buildBoldText(button.getText(), buttonStyle.getTextColor()));
+                    } else {
+                        imageButton.setText(buildText(button.getText(), buttonStyle.getTextColor()));
+                    }
+                    imageButton.setTextSize(buttonStyle.getTextSize());
+
+                }
+
+                imageButton.setTextHAlign(ViberButton.TextAlign.MIDDLE);
+                imageButton.setTextVAlign(ViberButton.TextAlign.MIDDLE);
+
+                imageButton.setBgMediaType(ViberButton.BgMediaType.PICTURE);
+
+                richMedia.addButton(imageButton);
+            }
+        }
+
+        richMedia.setBgColor(LIGHT_GREY);
 
         return richMedia;
     }
@@ -146,6 +200,16 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         viberButton.setSilent(true);
 
+        if (StringUtils.isNotBlank(button.getBackgroundImage())) {
+            viberButton.setImage(button.getBackgroundImage());
+            viberButton.setBgMedia(button.getBackgroundImage());
+            viberButton.setBgMediaType(ViberButton.BgMediaType.PICTURE);
+            viberButton.setText("");
+        }
+
+        //viberButton.setImage("https://img.icons8.com/carbon-copy/2x/buy--v1.png");
+        //viberButton.setBgMediaType(ViberButton.BgMediaType.PICTURE);
+
         return viberButton;
     }
 
@@ -167,14 +231,194 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return resolvedActionType;
     }
 
+    protected RichMedia fromTextTileRows(List<TextTileRow> textTileRows) {
+        if (CollectionUtils.isEmpty(textTileRows)) {
+            return null;
+        }
+
+        RichMedia richMedia = new RichMedia();
+        richMedia.setBgColor(WHITE);
+        richMedia.setDefaultHeight(true);
+        richMedia.setButtonsGroupColumns(6); // ?
+        richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
+        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+
+        int partitionSize = TEXT_TILE_PARTITION;
+        List<List<TextTileRow>> partitions = new LinkedList<List<TextTileRow>>();
+        for (int i = 0; i < textTileRows.size(); i += partitionSize) {
+            partitions.add(textTileRows.subList(i,
+                    Math.min(i + partitionSize, textTileRows.size())));
+        }
+
+
+        for (List<TextTileRow> partition : partitions) {
+            int freeSpace = 7;
+            // Header
+            ViberButton itemHeader = new ViberButton("");
+            itemHeader.setActionType(BtnActionType.NONE);
+            itemHeader.setBgColor(RED);
+            itemHeader.setText(buildText("Товар", WHITE));
+            itemHeader.setColumns(TEXT_TILE_ITEM_HEADER_WIDTH);
+            itemHeader.setRows(1);
+
+            ViberButton priceHeader = new ViberButton("");
+            priceHeader.setActionType(BtnActionType.NONE);
+            priceHeader.setBgColor(RED);
+            priceHeader.setText(buildText("Грн", WHITE));
+            priceHeader.setColumns(TEXT_TILE_PRICE_HEADER_WIDTH);
+            priceHeader.setRows(1);
+
+            richMedia.addButton(itemHeader);
+            richMedia.addButton(priceHeader);
+            freeSpace--;
+
+
+            for (TextTileRow textTileRow : partition) {
+                ViberButton ib = new ViberButton("");
+                ib.setActionType(BtnActionType.NONE);
+                ib.setBgColor(GREY);
+                ib.setText(textTileRow.getItem());
+                ib.setColumns(TEXT_TILE_ITEM_HEADER_WIDTH);
+                ib.setRows(1);
+
+                ViberButton pb = new ViberButton("");
+                pb.setActionType(BtnActionType.NONE);
+                pb.setBgColor(GREY);
+                pb.setText("" + textTileRow.getPrice());
+                pb.setColumns(TEXT_TILE_PRICE_HEADER_WIDTH);
+                pb.setRows(1);
+
+                richMedia.addButton(ib);
+                richMedia.addButton(pb);
+                freeSpace--;
+            }
+
+            if (freeSpace > 0) {
+                for (int i = 0; i < freeSpace; i++) {
+                    ViberButton ib = new ViberButton("");
+                    ib.setActionType(BtnActionType.NONE);
+                    ib.setBgColor(GREY);
+                    ib.setColumns(TEXT_TILE_ITEM_HEADER_WIDTH);
+                    ib.setRows(1);
+
+                    ViberButton pb = new ViberButton("");
+                    pb.setActionType(BtnActionType.NONE);
+                    pb.setBgColor(GREY);
+                    pb.setColumns(TEXT_TILE_PRICE_HEADER_WIDTH);
+                    pb.setRows(1);
+
+                    richMedia.addButton(ib);
+                    richMedia.addButton(pb);
+
+                }
+            }
+
+
+        }
+
+        return richMedia;
+    }
+
+    protected RichMedia fromDataMap(String handlerId, List<Map<String, String>> listOfMap) {
+        if (CollectionUtils.isEmpty(listOfMap)) {
+            return null;
+        }
+
+        RichMedia richMedia = new RichMedia();
+        richMedia.setBgColor(WHITE);
+        richMedia.setDefaultHeight(true);
+        richMedia.setButtonsGroupColumns(6); // ?
+        richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
+        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+
+        int partitionSize = TEXT_TILE_PARTITION;
+        List<List<Map<String, String>>> partitions = new LinkedList<>();
+        for (int i = 0; i < listOfMap.size(); i += partitionSize) {
+            partitions.add(listOfMap.subList(i,
+                    Math.min(i + partitionSize, listOfMap.size())));
+        }
+
+
+        for (Map<String, String> m : listOfMap) {
+            String ca = "";
+            int freeSpace = DEFAULT_TILE_HEIGHT;
+            if (m.containsKey(KEY)) {
+                String key = m.get(KEY);
+                ca = new Gson().toJson(new ButtonAction(PRESSED + ":" + handlerId + "?" + KEY + "=" + key));
+
+                // Header
+                ViberButton itemHeader = new ViberButton(ca);
+                itemHeader.setActionType(BtnActionType.REPLY);
+                itemHeader.setText(buildText(key, WHITE));
+                itemHeader.setBgColor(RED);
+                itemHeader.setColumns(DEFAULT_BUTTON_WIDTH);
+                itemHeader.setRows(1);
+
+                richMedia.addButton(itemHeader);
+                freeSpace--;
+            }
+
+            for (Map.Entry<String, String> pair : m.entrySet()) {
+                if (freeSpace == 0) {
+                    break;
+                }
+                if (StringUtils.equals(KEY, pair.getKey())) {
+                    continue;
+                }
+                ViberButton kb = new ViberButton(ca);
+                kb.setActionType(BtnActionType.REPLY);
+                kb.setBgColor(GREY);
+                kb.setText(pair.getKey());
+                kb.setColumns(3);
+                kb.setRows(1);
+
+                ViberButton vb = new ViberButton(ca);
+                vb.setActionType(BtnActionType.REPLY);
+                vb.setBgColor(GREY);
+                vb.setText(pair.getValue());
+                vb.setColumns(3);
+                vb.setRows(1);
+
+                richMedia.addButton(kb);
+                richMedia.addButton(vb);
+
+                freeSpace--;
+            }
+
+            for (int i = 0; i < freeSpace; i++) {
+                ViberButton kb = new ViberButton("");
+                kb.setActionType(BtnActionType.NONE);
+                kb.setBgColor(GREY);
+                kb.setColumns(3);
+                kb.setRows(1);
+
+                ViberButton vb = new ViberButton(ca);
+                vb.setActionType(BtnActionType.NONE);
+                vb.setBgColor(GREY);
+                vb.setColumns(3);
+                vb.setRows(1);
+
+                richMedia.addButton(kb);
+                richMedia.addButton(vb);
+            }
+        }
+
+
+        return richMedia;
+    }
+
     private String buildText(String label, String color) {
         return "<font color='" + color + "'>" + label + "</font>";
+    }
+
+    private String buildBoldText(String label, String color) {
+        return "<b><font color='" + color + "'>" + label + "</font></b>";
     }
 
     protected ResourceBundle getResourceBundle() {
         // TODO: build UA locale
         Locale locale = new Locale("uk", "UA");
-         return ResourceBundle.getBundle("messages", locale, new UTF8Control());
+        return ResourceBundle.getBundle("messages", locale, new UTF8Control());
     }
 
 }

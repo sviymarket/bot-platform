@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.reconsale.bot.constant.Beans.HANDLERS_MAP;
 import static com.reconsale.bot.constant.HandlerKeys.CONVERSATION_STARTED_HANDLER_KEY;
@@ -35,13 +36,16 @@ public class RequestDispatcher {
         String key = toKey(request);
         log.info("Handler key: " + key);
 
-        Handler handler = mappings.get(key);
-        if (Objects.isNull(handler)) {
-            handler = mappings.get(CONVERSATION_STARTED_HANDLER_KEY);
+        Handler handler = mappings.get(CONVERSATION_STARTED_HANDLER_KEY);
+        for (Map.Entry<String, Handler> e: mappings.entrySet()) {
+            if (Objects.nonNull(key) && key.startsWith(e.getKey())) {
+                handler = e.getValue();
+                break;
+            }
         }
 
         log.info("Got handler: " + handler);
-        return handler.handle(request);
+        return handler.handle(request, key);
     }
 
     protected String toKey(Request request) {

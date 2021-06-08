@@ -6,4 +6,6 @@ public class HandlerKeys {
 
     public static final String CONVERSATION_STARTED_HANDLER_KEY = UNDEFINED + "-" + "conversation_started";
 
+    public static final String KEY = "key";
+
 }

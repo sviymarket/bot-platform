@@ -7,5 +7,9 @@ public interface Handler {
 
     Response handle(Request request);
 
+    default Response handle(Request request, String key) {
+        return handle(request);
+    }
+
     String mapping();
 }
