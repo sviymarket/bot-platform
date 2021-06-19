@@ -1,4 +1,4 @@
-package com.reconsale.bot.test.response;
+package com.reconsale.test.bot.response;
 
 import com.reconsale.bot.integration.AbstractResponseCase;
 import com.reconsale.bot.model.Response;

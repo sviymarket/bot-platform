@@ -1,12 +1,17 @@
 server:
-  port: 8090
+  port: 8080
 
 viber:
   bot:
-    authToken: ${VIBER_AUTH_TOKEN}
-    webhookUrl: https://59285f7f4bda.ngrok.io/api/viber/webhook
+    authToken: 4d592ae82d67d2fc-cd1f389ba6c19084-531fc7ea0cbd445
+    webhookUrl: https://chystenko-bot-ytvirh7npa-ew.a.run.app/api/viber/webhook
 
 logging:
   level:
     root: INFO
+    com.reconsale.bot: DEBUG
     com.reconsale.sm: DEBUG
+    
+openStoreDbUrl: jdbc:sqlserver://10.1.250.115:1433;databaseName=DataServer;user=d.paslavskyi;password=Reconsale1
+dwhDbUrl: jdbc:sqlserver://10.1.250.115:1433;databaseName=DWH.;user=d.paslavskyi;password=Reconsale1
+defaultDbUrl: jdbc:sqlserver://10.1.250.115:1433;databaseName=Bot;user=d.paslavskyi;password=Reconsale1
