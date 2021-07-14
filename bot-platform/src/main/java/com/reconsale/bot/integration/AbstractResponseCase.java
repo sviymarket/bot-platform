@@ -140,7 +140,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         richMedia.setDefaultHeight(true);
         richMedia.setButtonsGroupColumns(6); // ?
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
-        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+        richMedia.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN); // ?
 
         for (ButtonTile buttonTile : buttonTiles) {
             for (Button button : buttonTile.getButtons()) {
