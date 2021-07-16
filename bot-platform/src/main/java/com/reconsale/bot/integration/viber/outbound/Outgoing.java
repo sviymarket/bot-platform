@@ -39,6 +39,8 @@ public interface Outgoing {
 
     boolean postUrl(String url);
 
+    boolean postUrl(String url, ViberKeyboard keyboard);
+
     boolean postSticker(Integer stickerId);
 
     boolean postCarousel(RichMedia richMedia);

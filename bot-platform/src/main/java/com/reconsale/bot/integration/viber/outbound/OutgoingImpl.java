@@ -180,6 +180,16 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
+    public boolean postUrl(String url, ViberKeyboard keyboard) {
+        setMessageType(MessageType.URL);
+        message.addProperty(ViberConstants.MEDIA_URL, url);
+        Optional.ofNullable(keyboard).
+                map(viberKeyboard -> viberKeyboard.toJson()).
+                ifPresent(jsonObject -> message.add(ViberConstants.KEYBOARD, jsonObject));
+        return sendMessage();
+    }
+
+    @Override
     public boolean postSticker(Integer stickerId) {
         setMessageType(MessageType.STICKER);
         message.addProperty(ViberConstants.STICKER_ID, stickerId);
