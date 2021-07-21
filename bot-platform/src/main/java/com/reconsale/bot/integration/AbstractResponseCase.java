@@ -146,11 +146,11 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
             for (Button button : buttonTile.getButtons()) {
                 ViberButton imageButton = new ViberButton("");
                 imageButton.setActionType(BtnActionType.NONE);
-                //imageButton.setImage(button.getBackgroundImage());
-                imageButton.setBgMedia(button.getBackgroundImage());
-
+                imageButton.setImage(button.getBackgroundImage());
+                //imageButton.setBgMedia(button.getBackgroundImage());
                 imageButton.setRows(button.getButtonHeight());
                 imageButton.setColumns(DEFAULT_BUTTON_WIDTH);
+                imageButton.setBgColor(RED);
                 if (Objects.nonNull(button.getButtonWidth())) {
                     imageButton.setColumns(button.getButtonWidth());
                 }
@@ -319,6 +319,89 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return richMedia;
     }
 
+    protected RichMedia fromListOfDataMap(String handlerId, List<List<Map<String, String>>> listOfListOfMap) {
+        if (CollectionUtils.isEmpty(listOfListOfMap)) {
+            return null;
+        }
+
+        RichMedia richMedia = new RichMedia();
+        richMedia.setBgColor(WHITE);
+        richMedia.setDefaultHeight(true);
+        richMedia.setButtonsGroupColumns(6); // ?
+        richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
+        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+
+        for (List<Map<String, String>> listOfMap : listOfListOfMap) {
+
+            for (Map<String, String> m : listOfMap) {
+                String ca = "";
+                int freeSpace = DEFAULT_TILE_HEIGHT;
+                if (m.containsKey(KEY)) {
+                    String key = m.get(KEY);
+                    ca = new Gson().toJson(new ButtonAction(PRESSED + ":" + handlerId + "?" + KEY + "=" + key));
+
+                    // Header
+                    ViberButton itemHeader = new ViberButton(ca);
+                    itemHeader.setActionType(BtnActionType.REPLY);
+                    itemHeader.setText(buildText(key, WHITE));
+                    itemHeader.setBgColor(RED);
+                    itemHeader.setColumns(DEFAULT_BUTTON_WIDTH);
+                    itemHeader.setRows(1);
+
+                    richMedia.addButton(itemHeader);
+                    freeSpace--;
+                }
+
+                for (Map.Entry<String, String> pair : m.entrySet()) {
+                    if (freeSpace == 0) {
+                        break;
+                    }
+                    if (StringUtils.equals(KEY, pair.getKey())) {
+                        continue;
+                    }
+                    ViberButton kb = new ViberButton(ca);
+                    kb.setActionType(BtnActionType.REPLY);
+                    kb.setBgColor(GREY);
+                    kb.setText(pair.getKey());
+                    kb.setColumns(3);
+                    kb.setRows(1);
+
+                    ViberButton vb = new ViberButton(ca);
+                    vb.setActionType(BtnActionType.REPLY);
+                    vb.setBgColor(GREY);
+                    vb.setText(pair.getValue());
+                    vb.setColumns(3);
+                    vb.setRows(1);
+
+                    richMedia.addButton(kb);
+                    richMedia.addButton(vb);
+
+                    freeSpace--;
+                }
+
+                for (int i = 0; i < freeSpace; i++) {
+                    ViberButton kb = new ViberButton("");
+                    kb.setActionType(BtnActionType.NONE);
+                    kb.setBgColor(GREY);
+                    kb.setColumns(3);
+                    kb.setRows(1);
+
+                    ViberButton vb = new ViberButton(ca);
+                    vb.setActionType(BtnActionType.NONE);
+                    vb.setBgColor(GREY);
+                    vb.setColumns(3);
+                    vb.setRows(1);
+
+                    richMedia.addButton(kb);
+                    richMedia.addButton(vb);
+                }
+            }
+        }
+
+        return richMedia;
+
+    }
+
     protected RichMedia fromDataMap(String handlerId, List<Map<String, String>> listOfMap) {
         if (CollectionUtils.isEmpty(listOfMap)) {
             return null;
@@ -366,14 +449,14 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
                     continue;
                 }
                 ViberButton kb = new ViberButton(ca);
-                kb.setActionType(BtnActionType.REPLY);
+                kb.setActionType(BtnActionType.NONE);
                 kb.setBgColor(GREY);
                 kb.setText(pair.getKey());
                 kb.setColumns(3);
                 kb.setRows(1);
 
                 ViberButton vb = new ViberButton(ca);
-                vb.setActionType(BtnActionType.REPLY);
+                vb.setActionType(BtnActionType.NONE);
                 vb.setBgColor(GREY);
                 vb.setText(pair.getValue());
                 vb.setColumns(3);
