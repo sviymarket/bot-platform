@@ -424,14 +424,13 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         for (Map<String, String> m : listOfMap) {
             String ca = "";
-            int freeSpace = DEFAULT_TILE_HEIGHT;
+            int freeSpace = DEFAULT_TILE_HEIGHT - 1;
             if (m.containsKey(KEY)) {
                 String key = m.get(KEY);
-                ca = new Gson().toJson(new ButtonAction(PRESSED + ":" + handlerId + "?" + KEY + "=" + key));
 
                 // Header
                 ViberButton itemHeader = new ViberButton(ca);
-                itemHeader.setActionType(BtnActionType.REPLY);
+                itemHeader.setActionType(BtnActionType.NONE);
                 itemHeader.setText(buildText(key, WHITE));
                 itemHeader.setBgColor(RED);
                 itemHeader.setColumns(DEFAULT_BUTTON_WIDTH);
@@ -484,6 +483,21 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
                 richMedia.addButton(kb);
                 richMedia.addButton(vb);
             }
+
+            String key = m.get(KEY);
+            ca = new Gson().toJson(new ButtonAction(PRESSED + ":" + handlerId + "?" + KEY + "=" + key));
+
+            // Header
+            ViberButton itemHeader = new ViberButton(ca);
+            itemHeader.setActionType(BtnActionType.REPLY);
+            itemHeader.setText(buildText("Детальніше", WHITE));
+            itemHeader.setSilent(true);
+            itemHeader.setBgColor(RED);
+            itemHeader.setColumns(DEFAULT_BUTTON_WIDTH);
+            itemHeader.setRows(1);
+
+            richMedia.addButton(itemHeader);
+            freeSpace--;
         }
 
 
