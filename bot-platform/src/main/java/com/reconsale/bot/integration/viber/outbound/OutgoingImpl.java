@@ -199,7 +199,7 @@ public class OutgoingImpl implements Outgoing {
     @Override
     public boolean postCarousel(RichMedia richMedia) {
         setMessageType(MessageType.CAROUSEL);
-        message.addProperty(ViberConstants.MIN_API_VERSION, 2);
+        message.addProperty(ViberConstants.MIN_API_VERSION, MIN_API_VERSION);
         //message.addProperty(MessageType.CAROUSEL.getKeyName(), text);
         Optional.ofNullable(richMedia).
                 map(rm -> rm.toJson()).
@@ -210,7 +210,7 @@ public class OutgoingImpl implements Outgoing {
     @Override
     public boolean postCarousel(RichMedia richMedia, ViberKeyboard keyboard) {
         setMessageType(MessageType.CAROUSEL);
-        message.addProperty(ViberConstants.MIN_API_VERSION, 2);
+        message.addProperty(ViberConstants.MIN_API_VERSION, MIN_API_VERSION);
         message.addProperty(MessageType.CAROUSEL.getKeyName(), "texxt");
         Optional.ofNullable(richMedia).
                 map(rm -> rm.toJson()).
