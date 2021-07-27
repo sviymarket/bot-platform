@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 public class OutgoingImpl implements Outgoing {
 
-    private static final int MIN_API_VERSION = 3;
+    private static final int MIN_API_VERSION = 4;
 
     private final ViberClient viberClient;
     private final JsonObject message;

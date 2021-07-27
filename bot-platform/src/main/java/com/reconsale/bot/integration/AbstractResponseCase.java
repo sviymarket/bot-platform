@@ -82,10 +82,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         RichMedia richMedia = new RichMedia();
         richMedia.setBgColor(RED);
-        richMedia.setDefaultHeight(true);
+        //richMedia.setDefaultHeight(true);
         richMedia.setButtonsGroupColumns(6); // ?
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
-        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+        //richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
 
         ResourceBundle resourceBundle = getResourceBundle();
 
@@ -137,10 +137,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         RichMedia richMedia = new RichMedia();
         richMedia.setBgColor(WHITE);
-        richMedia.setDefaultHeight(true);
+        //richMedia.setDefaultHeight(true);
         richMedia.setButtonsGroupColumns(6); // ?
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
-        richMedia.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN); // ?
+        //richMedia.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN); // ?
 
         for (ButtonTile buttonTile : buttonTiles) {
             for (Button button : buttonTile.getButtons()) {
@@ -238,10 +238,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         RichMedia richMedia = new RichMedia();
         richMedia.setBgColor(WHITE);
-        richMedia.setDefaultHeight(true);
+        //richMedia.setDefaultHeight(true);
         richMedia.setButtonsGroupColumns(6); // ?
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
-        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+        //richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
 
         int partitionSize = TEXT_TILE_PARTITION;
         List<List<TextTileRow>> partitions = new LinkedList<List<TextTileRow>>();
@@ -326,10 +326,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         RichMedia richMedia = new RichMedia();
         richMedia.setBgColor(WHITE);
-        richMedia.setDefaultHeight(true);
+        //richMedia.setDefaultHeight(true);
         richMedia.setButtonsGroupColumns(6); // ?
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
-        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+        //richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
 
         for (List<Map<String, String>> listOfMap : listOfListOfMap) {
 
@@ -409,10 +409,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         RichMedia richMedia = new RichMedia();
         richMedia.setBgColor(WHITE);
-        richMedia.setDefaultHeight(true);
+        //richMedia.setDefaultHeight(true);
         richMedia.setButtonsGroupColumns(6); // ?
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
-        richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
+        //richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
 
         int partitionSize = TEXT_TILE_PARTITION;
         List<List<Map<String, String>>> partitions = new LinkedList<>();
