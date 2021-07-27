@@ -127,6 +127,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
             }
         }
 
+        richMedia.setDefaultHeight(null);
         return richMedia;
     }
 
@@ -176,6 +177,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
             }
         }
 
+        richMedia.setDefaultHeight(null);
         richMedia.setBgColor(LIGHT_GREY);
 
         return richMedia;
@@ -316,6 +318,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
         }
 
+        richMedia.setDefaultHeight(null);
         return richMedia;
     }
 
@@ -398,6 +401,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
             }
         }
 
+        richMedia.setDefaultHeight(null);
         return richMedia;
 
     }
@@ -501,6 +505,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         }
 
 
+        richMedia.setDefaultHeight(null);
         return richMedia;
     }
 
