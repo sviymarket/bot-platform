@@ -37,4 +37,6 @@ public class WebhookRequestPayload {
     private Boolean silent;
     private Boolean subscribed;
 
+    private String context;
+
 }
