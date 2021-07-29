@@ -178,7 +178,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         }
 
         richMedia.setDefaultHeight(null);
-        //richMedia.setBgColor(LIGHT_GREY);
+        richMedia.setBgColor(RED);
 
         return richMedia;
     }
