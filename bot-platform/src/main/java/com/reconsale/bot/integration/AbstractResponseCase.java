@@ -34,7 +34,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
     @Value(VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE)
     protected String botToken;
 
-    private MenuStyle defaultMenuStyle = new MenuStyle(true, GREY);
+    private MenuStyle defaultMenuStyle = new MenuStyle(true, null);
     private ButtonStyle defaultButtonStyle = new ButtonStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, DEFAULT_BUTTON_WIDTH);
     private TileStyle defaultTileStyle = new TileStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, 7, 0, 0, 0);
 
@@ -71,7 +71,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         // Disallow user input
 
         viberKeyboard.setInputFieldState(ButtonContainer.InputFieldState.HIDDEN);
-        viberKeyboard.setBgColor(WHITE);
+        //viberKeyboard.setBgColor(null);
         return viberKeyboard;
     }
 
@@ -137,7 +137,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         }
 
         RichMedia richMedia = new RichMedia();
-        richMedia.setBgColor(WHITE);
+        //richMedia.setBgColor(WHITE);
         //richMedia.setDefaultHeight(true);
         richMedia.setButtonsGroupColumns(6); // ?
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
@@ -178,7 +178,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         }
 
         richMedia.setDefaultHeight(null);
-        richMedia.setBgColor(LIGHT_GREY);
+        //richMedia.setBgColor(LIGHT_GREY);
 
         return richMedia;
     }
