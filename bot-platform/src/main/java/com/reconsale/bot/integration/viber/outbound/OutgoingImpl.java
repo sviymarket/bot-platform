@@ -117,6 +117,16 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
+    public boolean postPicture(String pictureUrl, ViberKeyboard viberKeyboard) {
+        setMessageType(MessageType.PICTURE);
+        message.addProperty(ViberConstants.MEDIA_URL, pictureUrl);
+        Optional.ofNullable(viberKeyboard).
+                map(keyboard -> viberKeyboard.toJson()).
+                ifPresent(jsonObject -> message.add(ViberConstants.KEYBOARD, jsonObject));
+        return sendMessage();
+    }
+
+    @Override
     public boolean postPicture(String pictureUrl, String description, String thumbnailUrl) {
         setMessageType(MessageType.PICTURE);
         message.addProperty(ViberConstants.MEDIA_URL, pictureUrl);
