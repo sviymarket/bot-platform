@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.reconsale.bot.conf.UTF8Control;
 import com.reconsale.bot.engine.ResponseCase;
 import com.reconsale.bot.integration.viber.ViberBotManager;
+import com.reconsale.bot.model.constant.Colors;
 import com.reconsale.bot.model.response.*;
 import com.reconsale.bot.model.response.styling.ButtonStyle;
 import com.reconsale.bot.model.response.styling.MenuStyle;
@@ -521,6 +522,80 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         // TODO: build UA locale
         Locale locale = new Locale("uk", "UA");
         return ResourceBundle.getBundle("messages", locale, new UTF8Control());
+    }
+
+    protected ButtonTile textWithImage(String text, String imageUrl) {
+        ButtonTile buttonTile = new ButtonTile();
+        List<Button> buttons = new ArrayList<>();
+        buttonTile.setButtons(buttons);
+
+        ButtonStyle buttonStyle = new ButtonStyle();
+        buttonStyle.setBackgroundColor(Colors.LIGHT_GREY);
+
+        Button top = new Button();
+        //top.setBackgroundImage(imageUrl);
+        top.setButtonHeight(4);
+        top.setText(text);
+        top.setButtonStyle(buttonStyle);
+        buttons.add(top);
+
+        Button bottom = new Button();
+        bottom.setBackgroundImage(imageUrl);
+        bottom.setButtonHeight(3);
+        bottom.setButtonStyle(buttonStyle);
+        buttons.add(bottom);
+
+        buttonTile.setButtons(buttons);
+        return buttonTile;
+    }
+
+    protected RichMedia fromTextWithImage(ButtonTile buttonTile) {
+        RichMedia richMedia = new RichMedia();
+        richMedia.setButtonsGroupColumns(6);
+        richMedia.setButtonsGroupRows(7);
+        richMedia.setDefaultHeight(null);
+        richMedia.setBgColor(Colors.LIGHT_GREY);
+
+        List<Button> buttons = buttonTile.getButtons();
+        Iterator it = buttons.iterator();
+
+        while (it.hasNext()) {
+            Button button = (Button) it.next();
+
+            ViberButton viberButton = new ViberButton("");
+            viberButton.setActionType(BtnActionType.NONE);
+
+            viberButton.setRows(button.getButtonHeight());
+            viberButton.setColumns(6);
+
+            viberButton.setBgColor(Colors.LIGHT_GREY);
+
+            if (Objects.nonNull(button.getBackgroundImage())) {
+                viberButton.setImage(button.getBackgroundImage());
+                viberButton.setBgMediaType(ViberButton.BgMediaType.PICTURE);
+            }
+
+            if (Objects.nonNull(button.getButtonWidth())) {
+                viberButton.setColumns(button.getButtonWidth());
+            }
+
+            if (StringUtils.isNotBlank(button.getText())) {
+                viberButton.setText(button.getText());
+            }
+
+            ButtonStyle buttonStyle = button.getButtonStyle();
+            if (Objects.nonNull(buttonStyle)) {
+                viberButton.setBgColor(buttonStyle.getBackgroundColor());
+                viberButton.setTextSize(buttonStyle.getTextSize());
+            }
+
+            viberButton.setTextHAlign(ViberButton.TextAlign.LEFT);
+            viberButton.setTextVAlign(ViberButton.TextAlign.MIDDLE);
+
+            richMedia.addButton(viberButton);
+        }
+
+        return richMedia;
     }
 
 }
