@@ -27,6 +27,8 @@ public interface Outgoing {
 
     boolean postPicture(String pictureUrl, ViberKeyboard viberKeyboard);
 
+    boolean postPicture(String pictureUrl, String description, ViberKeyboard viberKeyboard);
+
     boolean postPicture(String pictureUrl, String description, String thumbnailUrl);
 
     boolean postVideo(String videoUrl, Integer size);
