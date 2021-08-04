@@ -13,6 +13,7 @@ import com.reconsale.bot.model.request.User;
 import com.reconsale.bot.model.viber.input.Message;
 import com.reconsale.bot.model.viber.input.WebhookRequestPayload;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.reconsale.bot.constant.EventTypes.CONVERSATION_STARTED;
 import static com.reconsale.bot.model.viber.utils.ViberConstants.MESSAGE;
@@ -69,6 +68,14 @@ public class ViberConnector extends Connector {
         String requestId = UUID.randomUUID().toString();
         User user = new User(webhookRequestPayload.getUser().getId());
         Context context = null;
+
+        if (StringUtils.isNotBlank(webhookRequestPayload.getContext())) {
+            context = new Context();
+            Map<String, String> data = new HashMap<>();
+            data.put("context", webhookRequestPayload.getContext());
+            context.setData(data);
+        }
+
         Payload payload = new Payload();
         payload.setEventType(webhookRequestPayload.getEvent());
 

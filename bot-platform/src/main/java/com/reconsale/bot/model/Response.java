@@ -30,4 +30,6 @@ public class Response {
     private Carousel carousel;
     
     private List<Tile> tiles;
+
+    private Map<String, String> data;
 }
