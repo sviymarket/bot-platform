@@ -244,10 +244,10 @@ public class OutgoingImpl implements Outgoing {
 
     private boolean sendMessage() {
         try {
-            log.info("Sending message: " + message.toString());
+            //log.debug("Sending message: " + message.toString());
             String response = viberClient.post(
                     message.toString(), sendingUrl);
-            log.info("Got viber response: " + response);
+            //log.debug("Got viber response: " + response);
             return StringUtils.isNotEmpty(response);
         } catch (IOException e) {
             return false;

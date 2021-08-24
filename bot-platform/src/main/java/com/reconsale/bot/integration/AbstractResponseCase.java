@@ -234,9 +234,29 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return resolvedActionType;
     }
 
-    protected RichMedia fromTextTileRows(List<TextTileRow> textTileRows) {
-        if (CollectionUtils.isEmpty(textTileRows)) {
+    protected RichMedia fromTextTileRows(List<TextTileRow> inputTextTileRows, String handlerKey, String date, Integer page) {
+        if (CollectionUtils.isEmpty(inputTextTileRows)) {
             return null;
+        }
+
+        int currentPage = page;
+
+        int pageLimit = MAX_CAROUSEL_SIZE * PARTITION_SIZE;
+        List<List<TextTileRow>> pages = new LinkedList<>();
+
+        if (inputTextTileRows.size() > pageLimit) {
+            pageLimit--;
+            for (int i = 0; i < inputTextTileRows.size(); i += pageLimit) {
+                pages.add(inputTextTileRows.subList(i,
+                        Math.min(i + pageLimit, inputTextTileRows.size())));
+            }
+        } else {
+            pages.add(inputTextTileRows);
+        }
+
+        List<TextTileRow> textTileRows = pages.get(0);
+        if (currentPage <= pages.size()) {
+            textTileRows = pages.get(currentPage - 1);
         }
 
         RichMedia richMedia = new RichMedia();
@@ -246,15 +266,18 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         richMedia.setButtonsGroupRows(DEFAULT_TILE_HEIGHT);
         //richMedia.setInputFieldState(ButtonContainer.InputFieldState.REGULAR); // ?
 
-        int partitionSize = TEXT_TILE_PARTITION;
-        List<List<TextTileRow>> partitions = new LinkedList<List<TextTileRow>>();
+        int partitionSize = PARTITION_SIZE;
+        List<List<TextTileRow>> partitions = new LinkedList<>();
         for (int i = 0; i < textTileRows.size(); i += partitionSize) {
             partitions.add(textTileRows.subList(i,
                     Math.min(i + partitionSize, textTileRows.size())));
         }
 
 
+        int freeCarousels = MAX_CAROUSEL_SIZE;
         for (List<TextTileRow> partition : partitions) {
+            freeCarousels--;
+
             int freeSpace = 7;
             // Header
             ViberButton itemHeader = new ViberButton("");
@@ -296,6 +319,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
                 freeSpace--;
             }
 
+            if (freeCarousels == 0) {
+                freeSpace--;
+            }
+
             if (freeSpace > 0) {
                 for (int i = 0; i < freeSpace; i++) {
                     ViberButton ib = new ViberButton("");
@@ -316,7 +343,18 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
                 }
             }
 
-
+            if (freeCarousels == 0) {
+                int nextPage = currentPage + 1;
+                String ca = (new Gson()).toJson(new ButtonAction("pressed:" + handlerKey + "?" + "key" + "=" + date + "&" + "page" + "=" + nextPage));
+                ViberButton more = new ViberButton(ca);
+                more.setActionType(BtnActionType.REPLY);
+                more.setText(buildText("Ще товари...", Colors.WHITE));
+                more.setSilent(true);
+                more.setBgColor(Colors.RED);
+                more.setColumns(6);
+                more.setRows(1);
+                richMedia.addButton(more);
+            }
         }
 
         richMedia.setDefaultHeight(null);
@@ -557,10 +595,10 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         richMedia.setBgColor(Colors.LIGHT_GREY);
 
         List<Button> buttons = buttonTile.getButtons();
-        Iterator it = buttons.iterator();
+        Iterator<Button> it = buttons.iterator();
 
         while (it.hasNext()) {
-            Button button = (Button) it.next();
+            Button button = it.next();
 
             ViberButton viberButton = new ViberButton("");
             viberButton.setActionType(BtnActionType.NONE);

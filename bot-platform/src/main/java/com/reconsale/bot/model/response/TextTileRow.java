@@ -12,6 +12,7 @@ import lombok.Setter;
 public class TextTileRow {
 
     private String item;
+    private Integer count;
     private Double price;
 
 }

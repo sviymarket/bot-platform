@@ -10,4 +10,7 @@ public class Buttons {
     public static final int TEXT_TILE_PRICE_HEADER_WIDTH = 2;
     public static final int TEXT_TILE_PARTITION = 6;
 
+    public static final int PARTITION_SIZE = 6;
+    public static final int MAX_CAROUSEL_SIZE = 6;
+
 }

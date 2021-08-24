@@ -10,5 +10,6 @@ public class Contact {
 
     @JsonProperty("phone_number")
     String phoneNumber;
+    String referrer;
 
 }

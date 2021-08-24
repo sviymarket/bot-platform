@@ -40,6 +40,11 @@ public class ViberConnector extends Connector {
         log.debug("Received input: " + inputString);
         WebhookRequestPayload webhookRequestPayload = fromString(inputString);
         log.debug("Deserialized into: " + webhookRequestPayload);
+        if (Objects.isNull(webhookRequestPayload)) {
+            log.error("Failed to deserialize input string! {}", inputString);
+            log.error("Returning...");
+            return;
+        }
 
         String eventType = webhookRequestPayload.getEvent();
         if (!handledEventTypes.contains(eventType)) {
