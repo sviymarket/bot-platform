@@ -1,9 +1,32 @@
 package com.reconsale.bot.integration.viber;
 
+import static com.reconsale.bot.constant.EventTypes.CONVERSATION_STARTED;
+import static com.reconsale.bot.constant.EventTypes.MESSAGE;
+import static com.reconsale.bot.constant.EventTypes.SUBSCRIBED;
+import static com.reconsale.bot.constant.EventTypes.UNSUBSCRIBED;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import com.reconsale.bot.engine.ResponseCase;
+import com.reconsale.bot.engine.SystemHandler;
 import com.reconsale.bot.integration.Connector;
 import com.reconsale.bot.model.Request;
 import com.reconsale.bot.model.Response;
@@ -12,25 +35,17 @@ import com.reconsale.bot.model.request.Payload;
 import com.reconsale.bot.model.request.User;
 import com.reconsale.bot.model.viber.input.Message;
 import com.reconsale.bot.model.viber.input.WebhookRequestPayload;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.*;
-
-import static com.reconsale.bot.constant.EventTypes.CONVERSATION_STARTED;
-import static com.reconsale.bot.model.viber.utils.ViberConstants.MESSAGE;
 
 @Slf4j
 @RestController
-public class ViberConnector extends Connector {
+public class ViberConnector extends Connector implements ApplicationContextAware {
 
     private final Set<String> handledEventTypes = Sets.newHashSet(MESSAGE, CONVERSATION_STARTED);
+    private final Set<String> systemEventTypes = Sets.newHashSet(SUBSCRIBED, UNSUBSCRIBED);
+
+    private Map<String, SystemHandler> systemHandlers;    
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -47,10 +62,22 @@ public class ViberConnector extends Connector {
         }
 
         String eventType = webhookRequestPayload.getEvent();
+        
+        if (systemEventTypes.contains(eventType)) {
+            SystemHandler systemHandler = systemHandlers.get(eventType);
+            
+            if (systemHandler != null) {
+               log.info("Handling system event: " + eventType + " for user " +webhookRequestPayload.getUserId());
+               systemHandler.handle(resolveRequest(webhookRequestPayload));
+            } else {
+                log.info("Not found handler for system event: " + eventType + webhookRequestPayload.getUserId()); 
+            }
+        }       
+        
         if (!handledEventTypes.contains(eventType)) {
             log.debug("Skipping event type '" + eventType + "'...");
             return;
-        }
+        } 
 
         Request request = resolveRequest(webhookRequestPayload);
         Response response = requestDispatcher.dispatch(request);
@@ -71,7 +98,15 @@ public class ViberConnector extends Connector {
 
     private Request resolveRequest(WebhookRequestPayload webhookRequestPayload) {
         String requestId = UUID.randomUUID().toString();
-        User user = new User(webhookRequestPayload.getUser().getId());
+        String userId = null;
+        
+        if (webhookRequestPayload.getUser() != null) {
+            userId = webhookRequestPayload.getUser().getId();
+        } else {
+            userId = webhookRequestPayload.getUserId();
+        }
+        
+        User user = new User(userId);
         Context context = null;
 
         if (StringUtils.isNotBlank(webhookRequestPayload.getContext())) {
@@ -115,4 +150,11 @@ public class ViberConnector extends Connector {
         return null;
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        systemHandlers = new HashMap<String, SystemHandler>();
+        for (Map.Entry<String, SystemHandler> e : applicationContext.getBeansOfType(SystemHandler.class).entrySet()) {
+            systemHandlers.put(e.getValue().getEvent(), e.getValue());
+        }        
+    }
 }

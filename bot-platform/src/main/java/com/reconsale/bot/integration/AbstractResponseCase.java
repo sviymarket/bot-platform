@@ -35,11 +35,11 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
     @Value(VIBER_BOT_AUTHENTICATION_TOKEN_PROPERTY_REFERENCE)
     protected String botToken;
 
-    private MenuStyle defaultMenuStyle = new MenuStyle(true, null);
-    private ButtonStyle defaultButtonStyle = new ButtonStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, DEFAULT_BUTTON_WIDTH);
-    private TileStyle defaultTileStyle = new TileStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, 7, 0, 0, 0);
+    private static MenuStyle defaultMenuStyle = new MenuStyle(true, null);
+    private static ButtonStyle defaultButtonStyle = new ButtonStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, DEFAULT_BUTTON_WIDTH);
+    private static TileStyle defaultTileStyle = new TileStyle(RED, ViberButton.TextSize.MEDIUM, WHITE, 7, 0, 0, 0);
 
-    protected ViberKeyboard fromMenu(Menu menu) {
+    public static ViberKeyboard fromMenu(Menu menu) {
         if (Objects.isNull(menu) || CollectionUtils.isEmpty(menu.getButtons())) {
             return null;
         }
@@ -184,7 +184,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return richMedia;
     }
 
-    protected ViberButton fromButton(Button button, ResourceBundle resourceBundle) {
+    protected static ViberButton fromButton(Button button, ResourceBundle resourceBundle) {
         ButtonStyle buttonStyle = button.getButtonStyle();
         if (Objects.isNull(buttonStyle)) {
             buttonStyle = defaultButtonStyle;
@@ -216,7 +216,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return viberButton;
     }
 
-    private BtnActionType getActionType(Button button) {
+    private static BtnActionType getActionType(Button button) {
         BtnActionType resolvedActionType = BtnActionType.NONE;
 
         if (Objects.isNull(button) || Objects.isNull(button.getButtonActionType())) {
@@ -548,7 +548,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return richMedia;
     }
 
-    private String buildText(String label, String color) {
+    private static String buildText(String label, String color) {
         return "<font color='" + color + "'>" + label + "</font>";
     }
 
@@ -556,7 +556,7 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
         return "<b><font color='" + color + "'>" + label + "</font></b>";
     }
 
-    protected ResourceBundle getResourceBundle() {
+    protected static ResourceBundle getResourceBundle() {
         // TODO: build UA locale
         Locale locale = new Locale("uk", "UA");
         return ResourceBundle.getBundle("messages", locale, new UTF8Control());

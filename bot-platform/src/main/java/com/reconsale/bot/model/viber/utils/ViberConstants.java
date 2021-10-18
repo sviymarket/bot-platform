@@ -41,6 +41,7 @@ public class ViberConstants {
     public static final String TIMESTAMP = "timestamp";
     public static final String MESSAGE_TOKEN = "message_token";
     public static final String MESSAGE = "message";
+    public static final String UNSUBSCRIBED = "unsubscribed";
     public static final String RECEIVER = "receiver";
     public static final String ATTACHMENT_TYPE = "type";
     public static final String MESSAGE_TEXT = "text";
