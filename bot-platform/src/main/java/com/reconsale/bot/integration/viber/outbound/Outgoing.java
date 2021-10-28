@@ -11,7 +11,7 @@ public interface Outgoing {
      * @param text text of messageForUser
      * @return true if messageForUser received successful
      */
-    boolean postText(String text);
+    String postText(String text);
 
     /**
      * Sending a text message with replay keyboard
@@ -19,35 +19,35 @@ public interface Outgoing {
      * @param text text of messageForUser
      * @return true if messageForUser received successful
      */
-    boolean postText(String text, ViberKeyboard keyboard);
+    String postText(String text, ViberKeyboard keyboard);
 
-    boolean postKeyboard(ViberKeyboard keyboard);
+    String postKeyboard(ViberKeyboard keyboard);
 
-    boolean postPicture(String pictureUrl, String description);
+    String postPicture(String pictureUrl, String description);
 
-    boolean postPicture(String pictureUrl, ViberKeyboard viberKeyboard);
+    String postPicture(String pictureUrl, ViberKeyboard viberKeyboard);
 
-    boolean postPicture(String pictureUrl, String description, ViberKeyboard viberKeyboard);
+    String postPicture(String pictureUrl, String description, ViberKeyboard viberKeyboard);
 
-    boolean postPicture(String pictureUrl, String description, String thumbnailUrl);
+    String postPicture(String pictureUrl, String description, String thumbnailUrl);
 
-    boolean postVideo(String videoUrl, Integer size);
+    String postVideo(String videoUrl, Integer size);
 
-    boolean postVideo(String videoUrl, Integer size, Integer duration, String thumbnailUrl);
+    String postVideo(String videoUrl, Integer size, Integer duration, String thumbnailUrl);
 
-    boolean postFile(String fileUrl, Integer size, String fileName);
+    String postFile(String fileUrl, Integer size, String fileName);
 
-    boolean postContact(String contactName, String phone);
+    String postContact(String contactName, String phone);
 
-    boolean postLocation(Float latitude, Float longitude);
+    String postLocation(Float latitude, Float longitude);
 
-    boolean postUrl(String url);
+    String postUrl(String url);
 
-    boolean postUrl(String url, ViberKeyboard keyboard);
+    String postUrl(String url, ViberKeyboard keyboard);
 
-    boolean postSticker(Integer stickerId);
+    String postSticker(Integer stickerId);
 
-    boolean postCarousel(RichMedia richMedia);
+    String postCarousel(RichMedia richMedia);
 
-    boolean postCarousel(RichMedia richMedia, ViberKeyboard keyboard);
+    String postCarousel(RichMedia richMedia, ViberKeyboard keyboard);
 }

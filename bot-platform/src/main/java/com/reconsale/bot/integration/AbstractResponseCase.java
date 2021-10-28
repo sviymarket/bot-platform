@@ -345,15 +345,35 @@ public abstract class AbstractResponseCase implements ResponseCase<Object> {
 
             if (freeCarousels == 0) {
                 int nextPage = currentPage + 1;
-                String ca = (new Gson()).toJson(new ButtonAction("pressed:" + handlerKey + "?" + "key" + "=" + date + "&" + "page" + "=" + nextPage));
-                ViberButton more = new ViberButton(ca);
-                more.setActionType(BtnActionType.REPLY);
-                more.setText(buildText("Ще товари...", Colors.WHITE));
-                more.setSilent(true);
-                more.setBgColor(Colors.RED);
-                more.setColumns(6);
-                more.setRows(1);
-                richMedia.addButton(more);
+
+                if (nextPage <= pages.size()) {
+                    String ca = (new Gson()).toJson(new ButtonAction("pressed:" + handlerKey + "?" + "key" + "=" + date + "&" + "page" + "=" + nextPage));
+                    ViberButton more = new ViberButton(ca);
+                    more.setActionType(BtnActionType.REPLY);
+                    more.setText(buildText("Ще товари...", Colors.WHITE));
+                    more.setSilent(true);
+                    more.setBgColor(Colors.RED);
+                    more.setColumns(6);
+                    more.setRows(1);
+                    richMedia.addButton(more);
+                } else {
+                    ViberButton ib = new ViberButton("");
+                    ib.setActionType(BtnActionType.NONE);
+                    ib.setBgColor(GREY);
+                    ib.setColumns(TEXT_TILE_ITEM_HEADER_WIDTH);
+                    ib.setRows(1);
+
+                    ViberButton pb = new ViberButton("");
+                    pb.setActionType(BtnActionType.NONE);
+                    pb.setBgColor(GREY);
+                    pb.setColumns(TEXT_TILE_PRICE_HEADER_WIDTH);
+                    pb.setRows(1);
+
+                    richMedia.addButton(ib);
+                    richMedia.addButton(pb);
+                }
+
+
             }
         }
 

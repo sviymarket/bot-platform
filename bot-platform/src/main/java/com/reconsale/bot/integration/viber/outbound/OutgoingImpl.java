@@ -89,12 +89,12 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postText(String text) {
+    public String postText(String text) {
         return postText(text, null);
     }
 
     @Override
-    public boolean postText(String text, ViberKeyboard keyboard) {
+    public String postText(String text, ViberKeyboard keyboard) {
         setMessageType(MessageType.TEXT);
         message.addProperty(ViberConstants.MESSAGE_TEXT, text);
         Optional.ofNullable(keyboard).
@@ -104,7 +104,7 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postKeyboard(ViberKeyboard keyboard) {
+    public String postKeyboard(ViberKeyboard keyboard) {
         Optional.ofNullable(keyboard).
                 map(viberKeyboard -> viberKeyboard.toJson()).
                 ifPresent(jsonObject -> message.add(ViberConstants.KEYBOARD, jsonObject));
@@ -112,12 +112,12 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postPicture(String pictureUrl, String description) {
+    public String postPicture(String pictureUrl, String description) {
         return postPicture(pictureUrl, description, StringUtils.EMPTY);
     }
 
     @Override
-    public boolean postPicture(String pictureUrl, ViberKeyboard viberKeyboard) {
+    public String postPicture(String pictureUrl, ViberKeyboard viberKeyboard) {
         setMessageType(MessageType.PICTURE);
         message.addProperty(ViberConstants.MEDIA_URL, pictureUrl);
         Optional.ofNullable(viberKeyboard).
@@ -127,7 +127,7 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postPicture(String pictureUrl, String description, ViberKeyboard viberKeyboard) {
+    public String postPicture(String pictureUrl, String description, ViberKeyboard viberKeyboard) {
         setMessageType(MessageType.PICTURE);
         message.addProperty(ViberConstants.MEDIA_URL, pictureUrl);
         message.addProperty(ViberConstants.MESSAGE_TEXT, description);
@@ -138,7 +138,7 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postPicture(String pictureUrl, String description, String thumbnailUrl) {
+    public String postPicture(String pictureUrl, String description, String thumbnailUrl) {
         setMessageType(MessageType.PICTURE);
         message.addProperty(ViberConstants.MEDIA_URL, pictureUrl);
         if (StringUtils.isNotEmpty(thumbnailUrl))
@@ -148,12 +148,12 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postVideo(String videoUrl, Integer size) {
+    public String postVideo(String videoUrl, Integer size) {
         return postVideo(videoUrl, size, null, StringUtils.EMPTY);
     }
 
     @Override
-    public boolean postVideo(String videoUrl, Integer size, Integer duration, String thumbnailUrl) {
+    public String postVideo(String videoUrl, Integer size, Integer duration, String thumbnailUrl) {
         setMessageType(MessageType.VIDEO);
         message.addProperty(ViberConstants.MEDIA_URL, videoUrl);
         if (StringUtils.isNotEmpty(thumbnailUrl))
@@ -165,7 +165,7 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postFile(String fileUrl, Integer size, String fileName) {
+    public String postFile(String fileUrl, Integer size, String fileName) {
         setMessageType(MessageType.FILE);
         message.addProperty(ViberConstants.MEDIA_URL, fileUrl);
         message.addProperty(ViberConstants.ATTACHMENT_SIZE, size);
@@ -174,7 +174,7 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postContact(String contactName, String phone) {
+    public String postContact(String contactName, String phone) {
         setMessageType(MessageType.CONTACT);
         JsonObject contact = new JsonObject();
         contact.addProperty(ViberConstants.NAME, contactName);
@@ -184,7 +184,7 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postLocation(Float latitude, Float longitude) {
+    public String postLocation(Float latitude, Float longitude) {
         setMessageType(MessageType.LOCATION);
         JsonObject location = new JsonObject();
         location.addProperty(ViberConstants.LATITUDE, latitude);
@@ -194,14 +194,14 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postUrl(String url) {
+    public String postUrl(String url) {
         setMessageType(MessageType.URL);
         message.addProperty(ViberConstants.MEDIA_URL, url);
         return sendMessage();
     }
 
     @Override
-    public boolean postUrl(String url, ViberKeyboard keyboard) {
+    public String postUrl(String url, ViberKeyboard keyboard) {
         setMessageType(MessageType.URL);
         message.addProperty(ViberConstants.MEDIA_URL, url);
         Optional.ofNullable(keyboard).
@@ -211,14 +211,14 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postSticker(Integer stickerId) {
+    public String postSticker(Integer stickerId) {
         setMessageType(MessageType.STICKER);
         message.addProperty(ViberConstants.STICKER_ID, stickerId);
         return sendMessage();
     }
 
     @Override
-    public boolean postCarousel(RichMedia richMedia) {
+    public String postCarousel(RichMedia richMedia) {
         setMessageType(MessageType.CAROUSEL);
         message.addProperty(ViberConstants.MIN_API_VERSION, MIN_API_VERSION);
         //message.addProperty(MessageType.CAROUSEL.getKeyName(), text);
@@ -229,7 +229,7 @@ public class OutgoingImpl implements Outgoing {
     }
 
     @Override
-    public boolean postCarousel(RichMedia richMedia, ViberKeyboard keyboard) {
+    public String postCarousel(RichMedia richMedia, ViberKeyboard keyboard) {
         setMessageType(MessageType.CAROUSEL);
         message.addProperty(ViberConstants.MIN_API_VERSION, MIN_API_VERSION);
         message.addProperty(MessageType.CAROUSEL.getKeyName(), "texxt");
@@ -242,15 +242,15 @@ public class OutgoingImpl implements Outgoing {
         return sendMessage();
     }
 
-    private boolean sendMessage() {
+    private String sendMessage() {
         try {
             //log.debug("Sending message: " + message.toString());
             String response = viberClient.post(
                     message.toString(), sendingUrl);
             //log.debug("Got viber response: " + response);
-            return StringUtils.isNotEmpty(response);
+            return response;
         } catch (IOException e) {
-            return false;
+            return "Message send failed! " + e.getMessage();
         }
     }
 
