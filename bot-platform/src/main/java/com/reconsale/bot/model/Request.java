@@ -17,5 +17,7 @@ public class Request {
     private Context context;
 
     private Payload payload;
+    
+    private String messageToken;
 
 }

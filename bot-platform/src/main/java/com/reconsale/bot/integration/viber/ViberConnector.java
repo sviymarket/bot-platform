@@ -4,6 +4,7 @@ import static com.reconsale.bot.constant.EventTypes.CONVERSATION_STARTED;
 import static com.reconsale.bot.constant.EventTypes.MESSAGE;
 import static com.reconsale.bot.constant.EventTypes.SUBSCRIBED;
 import static com.reconsale.bot.constant.EventTypes.UNSUBSCRIBED;
+import static com.reconsale.bot.constant.EventTypes.DELIVERED;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ViberConnector extends Connector implements ApplicationContextAware {
 
     private final Set<String> handledEventTypes = Sets.newHashSet(MESSAGE, CONVERSATION_STARTED);
-    private final Set<String> systemEventTypes = Sets.newHashSet(SUBSCRIBED, UNSUBSCRIBED);
+    private final Set<String> systemEventTypes = Sets.newHashSet(SUBSCRIBED, UNSUBSCRIBED, DELIVERED);
 
     private Map<String, SystemHandler> systemHandlers;    
 
@@ -129,7 +130,7 @@ public class ViberConnector extends Connector implements ApplicationContextAware
             }
         }
 
-        Request request = new Request(requestId, user, context, payload);
+        Request request = new Request(requestId, user, context, payload, webhookRequestPayload.getMessageToken());
         log.debug("Resolved request: " + request);
         return request;
     }
